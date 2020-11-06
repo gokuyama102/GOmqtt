@@ -81,10 +81,13 @@
         var IOLM = new Object();
         var log = document.getElementById("log")
 
-        var timestamp = new Date().getHours().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
-            + ":" + new Date().getMinutes().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
-            + ":" + new Date().getSeconds().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false });
-        var t = "<b>" + timestamp + " Connecting to broker</b>";
+        function timestamp() {
+            return new Date().getHours().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
+                + ":" + new Date().getMinutes().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
+                + ":" + new Date().getSeconds().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false });
+        }
+
+        var t = "<b>" + timestamp() + " Trying to connect to the broker</b>";
         log.innerHTML = t + "<br><br>" + log.innerHTML;
         // Create a client instance
         client = new Paho.MQTT.Client("amazing-electrician.cloudmqtt.com", 443, "web_" + parseInt(Math.random() * 100, 10));
@@ -108,25 +111,16 @@
             // Once a connection has been made, make a subscription and send a message.
             console.log("onConnect");
 
-            var timestamp = new Date().getHours().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
-                + ":" + new Date().getMinutes().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
-                + ":" + new Date().getSeconds().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false });
-            var t = "<b>" + timestamp + " Connected to the broker!</b>";
+            var t = "<b>" + timestamp() + " Connected to the broker!</b>";
             log.innerHTML = t + "<br><br>" + log.innerHTML;
-            var timestamp = new Date().getHours().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
-                + ":" + new Date().getMinutes().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
-                + ":" + new Date().getSeconds().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false });
-            var t = "<b>" + timestamp + " Subscribing to data </b>";
+            var t = "<b>" + timestamp() + " Subscribing to data </b>";
             log.innerHTML = t + "<br><br>" + log.innerHTML;
             client.subscribe("#");
         }
 
         function doFail(e) {
             console.log(e);
-            var timestamp = new Date().getHours().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
-                + ":" + new Date().getMinutes().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
-                + ":" + new Date().getSeconds().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false });
-            var t = "<b>" + timestamp + " Failed to connect to the broker!</b> Please, check if username is correct and if the broker is active. Refresh the page to try again.";
+            var t = "<b>" + timestamp() + " Failed to connect to the broker!</b> Please, check if username is correct and if the broker is active. Refresh the page to try again.";
             log.innerHTML = t + "<br><br>" + log.innerHTML;
         }
 
@@ -134,6 +128,8 @@
         function onConnectionLost(responseObject) {
             if (responseObject.errorCode !== 0) {
                 console.log("onConnectionLost:" + responseObject.errorMessage);
+                var t = "<b>" + timestamp() + " Lost connection to the broker!</b> Refresh the page to start again.";
+                log.innerHTML = t + "<br><br>" + log.innerHTML;
             }
         }
 
@@ -142,11 +138,7 @@
         function onMessageArrived(message) {
 
             //Datalogger
-            var timestamp = new Date().getHours().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
-                + ":" + new Date().getMinutes().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
-                + ":" + new Date().getSeconds().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false });
-            t = "<b>" + timestamp + " " + message.destinationName + "</b>: " + message.payloadString;
-
+            t = "<b>" + timestamp() + " " + message.destinationName + "</b>: " + message.payloadString;
             log.innerHTML = t + "<br><br>" + log.innerHTML;
 
             //Parsing IOLM data
