@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        padding-left: 3%;
+        padding-right: 3%;
+    }
+
+    /* Make topic text bold */
+    li,
+    #myUL {
+        font-weight: bold;
+    }
+
+    /* Remove default bullets */
+    ul,
+    #myUL {
+        list-style-type: none;
+        font-weight: normal;
+    }
+
+    /* Remove margins and padding from the parent ul */
+    #myUL {
+        margin: 0;
+        padding: 2%;
+        padding-top: 0;
+    }
+
+    /* Style the caret/arrow */
+    .caret {
+        cursor: pointer;
+        user-select: none;
+        /* Prevent text selection */
+    }
+
+    /* Create the caret/arrow with a unicode, and style it */
+    .caret::before {
+        /*content: "\25B6";*/content: "+";
+        color: black;
+        display: inline-block;
+        margin-right: 6px;
+    }
+
+    /* Rotate the caret/arrow icon when clicked on (using JavaScript) */
+    .caret-down::before {
+        /*transform: rotate(90deg);*/content: "-";
+    }
+
+    /* Hide the nested list */
+    .nested {
+        display: none;
+    }
+
+    /* Show the nested list when the user clicks on the caret/arrow (with JavaScript) */
+    .active {
+        display: block;
+    }
+
+    #log {
+        padding-left: 2%;
+        padding-right: 2%;
+    }
+</style>
+
+<body>
+    <h1>Demo MQTT Data Explorer</h1>
+
+    <ul id="myUL"> </ul>
+
+    <h1>Demo MQTT Datalogger</h1>
+
+    <p id="log"></p>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        //MQTT stuff
+        var userpass = prompt("Username:", "GO_RO");
+        var IOLM = new Object();
+
+        // Create a client instance
+        client = new Paho.MQTT.Client("amazing-electrician.cloudmqtt.com", 443, "web_" + parseInt(Math.random() * 100, 10));
+
+        // set callback handlers
+        client.onConnectionLost = onConnectionLost;
+        client.onMessageArrived = onMessageArrived;
+        var options = {
+            useSSL: true,
+            userName: userpass,
+            password: userpass,
+            onSuccess: onConnect,
+            onFailure: doFail
+        }
+
+        // connect the client
+        client.connect(options);
+
+        // called when the client connects
+        function onConnect() {
+            // Once a connection has been made, make a subscription and send a message.
+            console.log("onConnect");
+            client.subscribe("#");
+        }
+
+        function doFail(e) {
+            console.log(e);
+        }
+
+        // called when the client loses its connection
+        function onConnectionLost(responseObject) {
+            if (responseObject.errorCode !== 0) {
+                console.log("onConnectionLost:" + responseObject.errorMessage);
+            }
+        }
+
+        // called when a message arrives
+        var log = document.getElementById("log")
+        function onMessageArrived(message) {
+
+            //Datalogger
+            var timestamp = new Date().getHours().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
+                + ":" + new Date().getMinutes().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
+                + ":" + new Date().getSeconds().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false });
+            t = "<b>" + timestamp + " " + message.destinationName + "</b>: " + message.payloadString;
+
+            log.innerHTML = t + "<br><br>" + log.innerHTML;
+
+            //Parsing IOLM data
+            path = message.destinationName.split("/");
+            var mIOLM = IOLM;
+
+            for (i = 0; i < path.length - 1; i++) {
+                if (mIOLM[path[i]] === undefined) {
+                    mIOLM[path[i]] = new Object();
+                }
+                mIOLM = mIOLM[path[i]];
+            }
+
+            mIOLM[path[path.length - 1]] = JSON.parse(message.payloadString);
+            console.log(IOLM);
+
+            //Pass data to tree view
+            var treeView = document.getElementById("myUL");
+            //path exists?
+            //if not, create path
+            if (document.getElementById(message.destinationName) === null) {
+                var mItem = path.shift();
+                var relativePath = mItem;
+                var pElement = treeView;
+                for (var i = path.length; i >= 0; i--) {
+                    if (document.getElementById(relativePath) === null) {
+                        var newLI = document.createElement("li");
+                        var newSpan = document.createElement("span");
+                        var newUL = document.createElement("ul");
+                        newUL.id = relativePath;
+                        newUL.className = "nested";
+                        newSpan.className = "caret";
+                        newSpan.innerHTML = mItem;
+                        newSpan.addEventListener("click", function () {
+                            this.parentElement.querySelector(".nested").classList.toggle("active");
+                            this.classList.toggle("caret-down");
+                        });
+                        newLI.appendChild(newSpan);
+                        newLI.appendChild(newUL);
+                        pElement.appendChild(newLI);
+                    }
+                    pElement = document.getElementById(relativePath);
+                    mItem = path.shift();
+                    relativePath = relativePath + "/" + mItem;
+                }
+            }
+            //if yes, update data
+            if (document.getElementById(message.destinationName) != null) {
+                document.getElementById(message.destinationName).innerHTML = message.payloadString;
+            }
+        }
+    </script>
+</body>
+
+</html>
