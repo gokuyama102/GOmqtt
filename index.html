@@ -84,7 +84,7 @@
         var timestamp = new Date().getHours().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
             + ":" + new Date().getMinutes().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
             + ":" + new Date().getSeconds().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false });
-        var t = "<b>" + timestamp + " Trying to connect to MQTT Broker</b>: ";
+        var t = "<b>" + timestamp + " Trying to connect to the broker</b>: ";
         log.innerHTML = t + "<br><br>" + log.innerHTML;
         // Create a client instance
         client = new Paho.MQTT.Client("amazing-electrician.cloudmqtt.com", 443, "web_" + parseInt(Math.random() * 100, 10));
@@ -111,7 +111,7 @@
             var timestamp = new Date().getHours().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
                 + ":" + new Date().getMinutes().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
                 + ":" + new Date().getSeconds().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false });
-            var t = "<b>" + timestamp + " Connected to MQTT Broker!</b>";
+            var t = "<b>" + timestamp + " Connected to the broker!</b>";
             log.innerHTML = t + "<br><br>" + log.innerHTML;
             var timestamp = new Date().getHours().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
                 + ":" + new Date().getMinutes().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
@@ -126,7 +126,7 @@
             var timestamp = new Date().getHours().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
                 + ":" + new Date().getMinutes().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
                 + ":" + new Date().getSeconds().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false });
-            var t = "<b>" + timestamp + " Failed to connect to MQTT Broker!</b> Please, check if username is correct and if the broker is active. Refresh the page to try again.";
+            var t = "<b>" + timestamp + " Failed to connect to the broker!</b> Please, check if username is correct and if the broker is active. Refresh the page to try again.";
             log.innerHTML = t + "<br><br>" + log.innerHTML;
         }
 
