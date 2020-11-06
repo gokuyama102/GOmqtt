@@ -36,7 +36,8 @@
 
     /* Create the caret/arrow with a unicode, and style it */
     .caret::before {
-        /*content: "\25B6";*/content: "+";
+        /*content: "\25B6";*/
+        content: "+";
         color: black;
         display: inline-block;
         margin-right: 6px;
@@ -44,7 +45,8 @@
 
     /* Rotate the caret/arrow icon when clicked on (using JavaScript) */
     .caret-down::before {
-        /*transform: rotate(90deg);*/content: "-";
+        /*transform: rotate(90deg);*/
+        content: "-";
     }
 
     /* Hide the nested list */
@@ -77,7 +79,13 @@
         //MQTT stuff
         var userpass = prompt("Username:", "GO_RO");
         var IOLM = new Object();
+        var log = document.getElementById("log")
 
+        var timestamp = new Date().getHours().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
+            + ":" + new Date().getMinutes().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
+            + ":" + new Date().getSeconds().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false });
+        var t = "<b>" + timestamp + " Trying to connect to MQTT Broker</b>: ";
+        log.innerHTML = t + "<br><br>" + log.innerHTML;
         // Create a client instance
         client = new Paho.MQTT.Client("amazing-electrician.cloudmqtt.com", 443, "web_" + parseInt(Math.random() * 100, 10));
 
@@ -99,11 +107,27 @@
         function onConnect() {
             // Once a connection has been made, make a subscription and send a message.
             console.log("onConnect");
+
+            var timestamp = new Date().getHours().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
+                + ":" + new Date().getMinutes().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
+                + ":" + new Date().getSeconds().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false });
+            var t = "<b>" + timestamp + " Connected to MQTT Broker!</b>";
+            log.innerHTML = t + "<br><br>" + log.innerHTML;
+            var timestamp = new Date().getHours().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
+                + ":" + new Date().getMinutes().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
+                + ":" + new Date().getSeconds().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false });
+            var t = "<b>" + timestamp + " Subscribing to data </b>";
+            log.innerHTML = t + "<br><br>" + log.innerHTML;
             client.subscribe("#");
         }
 
         function doFail(e) {
             console.log(e);
+            var timestamp = new Date().getHours().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
+                + ":" + new Date().getMinutes().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
+                + ":" + new Date().getSeconds().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false });
+            var t = "<b>" + timestamp + " Failed to connect to MQTT Broker!</b> Please, check if username is correct and if the broker is active. Refresh the page to try again.";
+            log.innerHTML = t + "<br><br>" + log.innerHTML;
         }
 
         // called when the client loses its connection
@@ -114,7 +138,7 @@
         }
 
         // called when a message arrives
-        var log = document.getElementById("log")
+
         function onMessageArrived(message) {
 
             //Datalogger
