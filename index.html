@@ -84,7 +84,7 @@
         var timestamp = new Date().getHours().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
             + ":" + new Date().getMinutes().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
             + ":" + new Date().getSeconds().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false });
-        var t = "<b>" + timestamp + " Trying to connect to the broker</b>: ";
+        var t = "<b>" + timestamp + " Connecting to broker</b>";
         log.innerHTML = t + "<br><br>" + log.innerHTML;
         // Create a client instance
         client = new Paho.MQTT.Client("amazing-electrician.cloudmqtt.com", 443, "web_" + parseInt(Math.random() * 100, 10));
