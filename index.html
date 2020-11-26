@@ -113,7 +113,7 @@
 
             var t = "<b>" + timestamp() + " Connected to the broker!</b>";
             log.innerHTML = t + "<br><br>" + log.innerHTML;
-            var t = "<b>" + timestamp() + " Subscribing to data </b>";
+            var t = "<b>" + timestamp() + " Subscribing to '#' </b>";
             log.innerHTML = t + "<br><br>" + log.innerHTML;
             client.subscribe("#");
         }
