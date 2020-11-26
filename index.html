@@ -187,7 +187,8 @@
             }
             //if yes, update data
             if (document.getElementById(message.destinationName) != null) {
-                document.getElementById(message.destinationName).innerHTML = "<pre>" +JSON.stringify(message.payloadString, null, "<br>")+"</pre>";
+                var mjson = JSON.parse(message.payloadString);
+                document.getElementById(message.destinationName).innerHTML = "<pre>" +JSON.stringify(mjson, null, 4)+"</pre>";
             }
         }
     </script>
