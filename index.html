@@ -7,6 +7,39 @@
         padding-right: 3%;
     }
 
+    .port {
+
+        padding: 5px;
+    }
+
+    #geral {
+        width: 960px;
+
+    }
+
+    #coluna1 {
+        float: left;
+        width: 320px;
+
+    }
+
+
+
+    #coluna2 {
+        float: right;
+        width: 640px;
+    }
+
+    #coluna2-1 {
+        float: left;
+        width: 320px;
+    }
+
+    #coluna2-2 {
+        float: right;
+        width: 320px;
+    }
+
     /* Make topic text bold */
     li,
     #myUL {
@@ -66,6 +99,81 @@
 </style>
 
 <body>
+    <h1>IOLM Status</h1>
+    <div id="geral">
+        <div id="principal">
+            <div id="coluna1">
+                <div id="Coluna1-1">
+
+                </div>
+                <div id="coluna1-2">
+                    <p id="port1" class="port">
+                        <b>Port 1</b>
+                        <br>Device: <a id="port1/prodname"></a>
+                        <br>Serial: <a id="port1/serial"></a>
+                        <br>Status: <a id="port1/status"></a>
+                        <br>PDI: <a id="port1/pdi"></a>
+                        <br>Stability: <a id="port1/stability"></a>
+                        <br>Temperature: <a id="port1/temperature"></a>
+                    </p>
+                    <p id="port3" class="port">
+                        <b>Port 3</b>
+                        <br>Device: <a id="port3/prodname"></a>
+                        <br>Serial: <a id="port3/serial"></a>
+                        <br>Status: <a id="port3/status"></a>
+                    </p>
+                    <p id="port5" class="port">
+                        <b>Port 5</b>
+                        <br>Device: <a id="port5/prodname"></a>
+                        <br>Serial: <a id="port5/serial"></a>
+                        <br>Status: <a id="port5/status"></a>
+                    </p>
+                    <p id="port7" class="port">
+                        <b>Port 7</b>
+                        <br>Device: <a id="port7/prodname"></a>
+                        <br>Serial: <a id="port7/serial"></a>
+                        <br>Status: <a id="port7/status"></a>
+                        <br></p>
+                </div>
+                
+            </div>
+            <div id="coluna2">
+                <div id="coluna2-1">
+
+                </div>
+                <div id="coluna2-2">
+                    <p id="port2" class="port">
+                        <b>Port 2</b>
+                        <br>Device: <a id="port2/prodname"></a>
+                        <br>Serial: <a id="port2/serial"></a>
+                        <br>Status: <a id="port2/status"></a>
+                        <br>PDI: <a id="port2/pdi"></a>
+                        <br>Stability: <a id="port2/stability"></a>
+                        <br>Temperature: <a id="port2/temperature"></a>
+                    </p>
+                    <p id="port4" class="port">
+                        <b>Port 4</b>
+                        <br>Device: <a id="port4/prodname"></a>
+                        <br>Serial: <a id="port4/serial"></a>
+                        <br>Status: <a id="port4/status"></a>
+                    </p>
+                    <p id="port6" class="port">
+                        <b>Port 6</b>
+                        <br>Device: <a id="port6/prodname"></a>
+                        <br>Serial: <a id="port6/serial"></a>
+                        <br>Status: <a id="port6/status"></a>
+                    </p>
+                    <p id="port8" class="port">
+                        <b>Port 8</b>
+                        <br>Device: <a id="port8/prodname"></a>
+                        <br>Serial: <a id="port8/serial"></a>
+                        <br>Status: <a id="port8/status"></a>
+                        <br></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <h1>Demo MQTT Data Explorer</h1>
 
     <ul id="myUL"> </ul>
@@ -77,7 +185,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
     <script type="text/javascript">
         //MQTT stuff
-        var userpass = prompt("Username:", "GO_RO");
+        var userpass = "GO_RW";//prompt("Username:", "GO_RO");
         var IOLM = new Object();
         var log = document.getElementById("log")
 
@@ -89,10 +197,9 @@
 
         var t = "<b>" + timestamp() + " Trying to connect to the broker</b>";
         log.innerHTML = t + "<br><br>" + log.innerHTML;
-        // Create a client instance
+
         client = new Paho.MQTT.Client("amazing-electrician.cloudmqtt.com", 443, "web_" + parseInt(Math.random() * 100, 10));
 
-        // set callback handlers
         client.onConnectionLost = onConnectionLost;
         client.onMessageArrived = onMessageArrived;
         var options = {
@@ -103,19 +210,29 @@
             onFailure: doFail
         }
 
-        // connect the client
         client.connect(options);
 
-        // called when the client connects
+
+        var rISDU
         function onConnect() {
             // Once a connection has been made, make a subscription and send a message.
             console.log("onConnect");
-
             var t = "<b>" + timestamp() + " Connected to the broker!</b>";
             log.innerHTML = t + "<br><br>" + log.innerHTML;
             var t = "<b>" + timestamp() + " Subscribing to '#' </b>";
             log.innerHTML = t + "<br><br>" + log.innerHTML;
             client.subscribe("#");
+            rISDU = setInterval(requestISDU, 10000);
+
+        }
+
+        function requestISDU() {
+            if (IOLM["MQTT_GO"]["port"]["1"]["status"]["state"] == "Operate") {
+                var mmessage = new Paho.MQTT.Message("{\"op\": \"read\",\"index\": 65,\"format\": \"raw\"}");
+                mmessage.destinationName = "MQTT_GO/port/1/isdu/request/index65";
+                client.send(mmessage);
+            }
+
         }
 
         function doFail(e) {
@@ -124,16 +241,22 @@
             log.innerHTML = t + "<br><br>" + log.innerHTML;
         }
 
-        // called when the client loses its connection
         function onConnectionLost(responseObject) {
+            clearInterval(rISDU);
             if (responseObject.errorCode !== 0) {
                 console.log("onConnectionLost:" + responseObject.errorMessage);
                 var t = "<b>" + timestamp() + " Lost connection to the broker!</b> Refresh the page to start again.";
                 log.innerHTML = t + "<br><br>" + log.innerHTML;
             }
+
+            var t = "<b>" + timestamp() + " Trying to connect to the broker</b>";
+            log.innerHTML = t + "<br><br>" + log.innerHTML;
+            client.connect(options);
         }
 
-        // called when a message arrives
+
+
+
 
         function onMessageArrived(message) {
 
@@ -187,9 +310,199 @@
             }
             //if yes, update data
             if (document.getElementById(message.destinationName) != null) {
-                var mjson = JSON.parse(message.payloadString);
-                document.getElementById(message.destinationName).innerHTML = "<pre>" +JSON.stringify(mjson, null, 4)+"</pre>";
+                document.getElementById(message.destinationName).innerHTML = message.payloadString;
             }
+
+            //update IOLM Status
+            function findIOLMObject(mObject) {
+                path = mObject.split("/");
+                var mIOLM = IOLM;
+
+                for (i = 0; i < path.length; i++) {
+                    mIOLM = mIOLM[path[i]];
+                }
+
+                return mIOLM;
+            }
+
+            switch (message.destinationName) {
+                case "MQTT_GO/port/1/deviceinfo":
+                    var IOLMref = findIOLMObject("MQTT_GO/port/1/deviceinfo");
+                    document.getElementById("port1/prodname").innerHTML = IOLMref["prodname"];
+                    document.getElementById("port1/serial").innerHTML = IOLMref["serial"];
+                    break;
+                case "MQTT_GO/port/1/status":
+                    var IOLMref = findIOLMObject("MQTT_GO/port/1/status");
+                    document.getElementById("port1/status").innerHTML =
+                        IOLMref["status"] + " - " + IOLMref["state"];
+
+                    var mPort = document.getElementById("port1");
+                    if (document.getElementById("port1/status").innerHTML == "Inactive - CommLost") {
+                        mPort.style.backgroundColor = "red";
+                    } else {
+                        mPort.style.backgroundColor = "white";
+                    }
+                    break;
+                case "MQTT_GO/port/1/pdi":
+                    var IOLMref = findIOLMObject("MQTT_GO/port/1/pdi");
+                    if (IOLMref["P_ProcessData0"] != undefined) {
+                        document.getElementById("port1/pdi").innerHTML =
+                            IOLMref["P_ProcessData0"]["SSC___Switching_Signal"];
+                        document.getElementById("port1/stability").innerHTML =
+                            IOLMref["P_ProcessData0"]["DSC___Stability_Alarm"];
+                        var mPort = document.getElementById("port1");
+                        if (document.getElementById("port1/stability").innerHTML == "true") {
+                            mPort.style.backgroundColor = "yellow";
+                        } else {
+                            mPort.style.backgroundColor = "white";
+                        }
+                    }
+
+                    break;
+                case "MQTT_GO/port/1/isdu/response/index65":
+
+                    var IOLMref = findIOLMObject("MQTT_GO/port/1/isdu/response/index65");
+                    if (IOLMref["status"] == "OK") {
+                        switch (IOLMref["raw"][4]) {
+                            case 1:
+                                document.getElementById("port1/temperature").innerHTML =
+                                    "Critical High Temperature";
+                                break;
+                            case 2:
+                                document.getElementById("port1/temperature").innerHTML =
+                                    "Overtemperature";
+                                break;
+                            default:
+                                document.getElementById("port1/temperature").innerHTML =
+                                    "OK";
+                                break;
+                        }
+                    }
+                    break;
+
+                case "MQTT_GO/port/2/deviceinfo":
+                    var IOLMref = findIOLMObject("MQTT_GO/port/2/deviceinfo");
+                    document.getElementById("port2/prodname").innerHTML = IOLMref["prodname"];
+                    document.getElementById("port2/serial").innerHTML = IOLMref["serial"];
+                    break;
+                case "MQTT_GO/port/2/status":
+                    var IOLMref = findIOLMObject("MQTT_GO/port/2/status");
+                    document.getElementById("port2/status").innerHTML =
+                        IOLMref["status"] + " - " + IOLMref["state"];
+
+                    var mPort = document.getElementById("port2");
+                    if (document.getElementById("port2/status").innerHTML == "Inactive - CommLost") {
+                        mPort.style.backgroundColor = "red";
+                    } else {
+                        mPort.style.backgroundColor = "white";
+                    }
+                    break;
+
+                case "MQTT_GO/port/3/deviceinfo":
+                    var IOLMref = findIOLMObject("MQTT_GO/port/3/deviceinfo");
+                    document.getElementById("port3/prodname").innerHTML = IOLMref["prodname"];
+                    document.getElementById("port3/serial").innerHTML = IOLMref["serial"];
+                    break;
+                case "MQTT_GO/port/3/status":
+                    var IOLMref = findIOLMObject("MQTT_GO/port/3/status");
+                    document.getElementById("port3/status").innerHTML =
+                        IOLMref["status"] + " - " + IOLMref["state"];
+
+                    var mPort = document.getElementById("port3");
+                    if (document.getElementById("port3/status").innerHTML == "Inactive - CommLost") {
+                        mPort.style.backgroundColor = "red";
+                    } else {
+                        mPort.style.backgroundColor = "white";
+                    }
+                    break;
+
+                case "MQTT_GO/port/4/deviceinfo":
+                    var IOLMref = findIOLMObject("MQTT_GO/port/4/deviceinfo");
+                    document.getElementById("port4/prodname").innerHTML = IOLMref["prodname"];
+                    document.getElementById("port4/serial").innerHTML = IOLMref["serial"];
+                    break;
+                case "MQTT_GO/port/4/status":
+                    var IOLMref = findIOLMObject("MQTT_GO/port/4/status");
+                    document.getElementById("port4/status").innerHTML =
+                        IOLMref["status"] + " - " + IOLMref["state"];
+                    var mPort = document.getElementById("port4");
+                    if (document.getElementById("port4/status").innerHTML == "Inactive - CommLost") {
+                        mPort.style.backgroundColor = "red";
+                    } else {
+                        mPort.style.backgroundColor = "white";
+                    }
+                    break;
+
+                case "MQTT_GO/port/5/deviceinfo":
+                    var IOLMref = findIOLMObject("MQTT_GO/port/5/deviceinfo");
+                    document.getElementById("port5/prodname").innerHTML = IOLMref["prodname"];
+                    document.getElementById("port5/serial").innerHTML = IOLMref["serial"];
+                    break;
+                case "MQTT_GO/port/5/status":
+                    var IOLMref = findIOLMObject("MQTT_GO/port/5/status");
+                    document.getElementById("port5/status").innerHTML =
+                        IOLMref["status"] + " - " + IOLMref["state"];
+                    var mPort = document.getElementById("port5");
+                    if (document.getElementById("port5/status").innerHTML == "Inactive - CommLost") {
+                        mPort.style.backgroundColor = "red";
+                    } else {
+                        mPort.style.backgroundColor = "white";
+                    }
+                    break;
+
+                case "MQTT_GO/port/6/deviceinfo":
+                    var IOLMref = findIOLMObject("MQTT_GO/port/6/deviceinfo");
+                    document.getElementById("port6/prodname").innerHTML = IOLMref["prodname"];
+                    document.getElementById("port6/serial").innerHTML = IOLMref["serial"];
+                    break;
+                case "MQTT_GO/port/6/status":
+                    var IOLMref = findIOLMObject("MQTT_GO/port/6/status");
+                    document.getElementById("port6/status").innerHTML =
+                        IOLMref["status"] + " - " + IOLMref["state"];
+                    var mPort = document.getElementById("port6");
+                    if (document.getElementById("port6/status").innerHTML == "Inactive - CommLost") {
+                        mPort.style.backgroundColor = "red";
+                    } else {
+                        mPort.style.backgroundColor = "white";
+                    }
+                    break;
+
+                case "MQTT_GO/port/7/deviceinfo":
+                    var IOLMref = findIOLMObject("MQTT_GO/port/7/deviceinfo");
+                    document.getElementById("port7/prodname").innerHTML = IOLMref["prodname"];
+                    document.getElementById("port7/serial").innerHTML = IOLMref["serial"];
+                    break;
+                case "MQTT_GO/port/7/status":
+                    var IOLMref = findIOLMObject("MQTT_GO/port/7/status");
+                    document.getElementById("port7/status").innerHTML =
+                        IOLMref["status"] + " - " + IOLMref["state"];
+                    var mPort = document.getElementById("port7");
+                    if (document.getElementById("port7/status").innerHTML == "Inactive - CommLost") {
+                        mPort.style.backgroundColor = "red";
+                    } else {
+                        mPort.style.backgroundColor = "white";
+                    }
+                    break;
+
+                case "MQTT_GO/port/8/deviceinfo":
+                    var IOLMref = findIOLMObject("MQTT_GO/port/8/deviceinfo");
+                    document.getElementById("port8/prodname").innerHTML = IOLMref["prodname"];
+                    document.getElementById("port8/serial").innerHTML = IOLMref["serial"];
+                    break;
+                case "MQTT_GO/port/8/status":
+                    var IOLMref = findIOLMObject("MQTT_GO/port/8/status");
+                    document.getElementById("port8/status").innerHTML =
+                        IOLMref["status"] + " - " + IOLMref["state"];
+                    var mPort = document.getElementById("port8");
+                    if (document.getElementById("port8/status").innerHTML == "Inactive - CommLost") {
+                        mPort.style.backgroundColor = "red";
+                    } else {
+                        mPort.style.backgroundColor = "white";
+                    }
+                    break;
+                default:
+            }
+
         }
     </script>
 </body>
