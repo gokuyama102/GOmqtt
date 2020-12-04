@@ -135,7 +135,7 @@
                         <br>Status: <a id="port7/status"></a>
                         <br></p>
                 </div>
-                
+
             </div>
             <div id="coluna2">
                 <div id="coluna2-1">
@@ -357,10 +357,8 @@
                             mPort.style.backgroundColor = "white";
                         }
                     }
-
                     break;
                 case "MQTT_GO/port/1/isdu/response/index65":
-
                     var IOLMref = findIOLMObject("MQTT_GO/port/1/isdu/response/index65");
                     if (IOLMref["status"] == "OK") {
                         switch (IOLMref["raw"][4]) {
@@ -395,6 +393,40 @@
                         mPort.style.backgroundColor = "red";
                     } else {
                         mPort.style.backgroundColor = "white";
+                    }
+                    break;
+                case "MQTT_GO/port/2/pdi":
+                    var IOLMref = findIOLMObject("MQTT_GO/port/2/pdi");
+                    if (IOLMref["P_ProcessData0"] != undefined) {
+                        document.getElementById("port2/pdi").innerHTML =
+                            IOLMref["P_ProcessData0"]["SSC___Switching_Signal"];
+                        document.getElementById("port2/stability").innerHTML =
+                            IOLMref["P_ProcessData0"]["DSC___Stability_Alarm"];
+                        var mPort = document.getElementById("port2");
+                        if (document.getElementById("port2/stability").innerHTML == "true") {
+                            mPort.style.backgroundColor = "yellow";
+                        } else {
+                            mPort.style.backgroundColor = "white";
+                        }
+                    }
+                    break;
+                case "MQTT_GO/port/2/isdu/response/index65":
+                    var IOLMref = findIOLMObject("MQTT_GO/port/2/isdu/response/index65");
+                    if (IOLMref["status"] == "OK") {
+                        switch (IOLMref["raw"][4]) {
+                            case 1:
+                                document.getElementById("port2/temperature").innerHTML =
+                                    "Critical High Temperature";
+                                break;
+                            case 2:
+                                document.getElementById("port2/temperature").innerHTML =
+                                    "Overtemperature";
+                                break;
+                            default:
+                                document.getElementById("port2/temperature").innerHTML =
+                                    "OK";
+                                break;
+                        }
                     }
                     break;
 
