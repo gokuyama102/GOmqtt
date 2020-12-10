@@ -232,7 +232,7 @@
         //MQTT stuff
         var userpass = "GO_RW";//prompt("Username:", "GO_RO");
         var IOLM = new Object();
-        var IOLMBaseTopic = "";
+        var IOLMBaseTopic = "MQTT_GO";
         var log = document.getElementById("log")
 
         function timestamp() {
@@ -268,7 +268,7 @@
             var t = "<b>" + timestamp() + " Subscribing to '#' </b>";
             log.innerHTML = t + "<br><br>" + log.innerHTML;
             client.subscribe("#");
-            rISDU = setInterval(requestISDU, 10000);
+            //rISDU = setInterval(requestISDU, 10000);
 
         }
 
@@ -311,7 +311,9 @@
                 case "PMI40-F90-IU2EP-IO-V15":
                     return "https://files.pepperl-fuchs.com/webcat/navi/productInfo/pd/b246119a.png";
                     break;
-
+                case "OBG5000-R100-2EP-IO-V31":
+                    return "https://files.pepperl-fuchs.com/webcat/navi/productInfo/pd/b241434a.png";
+                    break;
                 default:
                     return "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D";
                     break;
@@ -386,27 +388,27 @@
 
                 return mIOLM;
             }
-            var IOLMref = findIOLMObject(message.destinationName);
+
             var portNum = message.destinationName.substr(message.destinationName.search("/port/") + 6, 1);
             if (portNum > 0) {
+                var IOLMref = findIOLMObject(message.destinationName);
+                var mPort = document.getElementById("framePort" + portNum);
                 switch (message.destinationName) {
-                    case "MQTT_GO/port/" + portNum + "/deviceinfo":
+                    case IOLMBaseTopic + "/port/" + portNum + "/deviceinfo":
                         document.getElementById("port" + portNum + "/prodname").innerHTML = IOLMref["prodname"];
                         document.getElementById("port" + portNum + "/serial").innerHTML = IOLMref["serial"];
                         document.getElementById("pImage" + portNum).src = getImgSrc(IOLMref["prodname"]);
                         break;
-                    case "MQTT_GO/port/" + portNum + "/status":
-                        document.getElementById("port" + portNum + "/status").innerHTML =
-                            IOLMref["status"] + " - " + IOLMref["state"];
+                    case IOLMBaseTopic + "/port/" + portNum + "/status":
+                        document.getElementById("port" + portNum + "/status").innerHTML = IOLMref["status"] + " - " + IOLMref["state"];
 
-                        var mPort = document.getElementById("framePort" + portNum);
                         if (document.getElementById("port" + portNum + "/status").innerHTML == "Inactive - CommLost") {
                             mPort.style.backgroundColor = "red";
                         } else {
                             mPort.style.backgroundColor = "white";
                         }
                         break;
-                    case "MQTT_GO/port/" + portNum + "/pdi":
+                    case IOLMBaseTopic + "/port/" + portNum + "/pdi":
                         document.getElementById("port" + portNum + "/pdi").innerHTML = IOLMref["raw"];
 
                         /*if (portNum < 3) {
@@ -415,7 +417,6 @@
                                     IOLMref["P_ProcessData0"]["SSC___Switching_Signal"];
                                 document.getElementById("port" + portNum + "/stability").innerHTML =
                                     IOLMref["P_ProcessData0"]["DSC___Stability_Alarm"];
-                                var mPort = document.getElementById("framePort" + portNum);
                                 if (document.getElementById("port" + portNum + "/stability").innerHTML == "true") {
                                     mPort.style.backgroundColor = "yellow";
                                 } else {
@@ -424,7 +425,7 @@
                             }
                         }*/
                         break;
-                    case "MQTT_GO/port/" + portNum + "/isdu/response/index65":
+                    case IOLMBaseTopic + "/port/" + portNum + "/isdu/response/index65":
                         if (portNum < 3) {
                             if (IOLMref["status"] == "OK") {
                                 switch (IOLMref["raw"][4]) {
