@@ -35,6 +35,8 @@
         background-color: white;
         margin-top: auto;
         margin-bottom: auto;
+        border: 1px;
+        border-color: black;
     }
 
     .port {
@@ -325,6 +327,9 @@
                 case "OBG5000-R100-2EP-IO-V31":
                     return "https://files.pepperl-fuchs.com/webcat/navi/productInfo/pd/b241434a.png";
                     break;
+                case "IQT1-F61-IO-V1":
+                    return "https://files.pepperl-fuchs.com/webcat/navi/productInfo/pd/b246502b.png";
+                    break;
                 default:
                     return "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D";
                     break;
@@ -349,6 +354,8 @@
                 return "Dis+SS";
             } else if (startsWith(prodName, "PMI")) {
                 return "Dis+SS/PMI";
+            } else if (startsWith(prodName, "IQT")) {
+                return "RW+Len+Data";
             } else {
                 return "Unknown";
             }
@@ -370,6 +377,11 @@
                     return "<br>Distance: <a id=\"port" + portNum + "/pdi\"></a>" +
                         "<br>Switching signal: <a id=\"port" + portNum + "/signal\"></a>" +
                         "<br>Signal quality: <a id=\"port" + portNum + "/quality\"></a>";
+                    break;
+                case "RW+Len+Data":
+                    return "<br>Mode: <a id=\"port" + portNum + "/mode\"></a>" +
+                        "<br>Length: <a id=\"port" + portNum + "/len\"></a>" +
+                        "<br>Data: <a id=\"port" + portNum + "/pdi\"></a>";
                     break;
                 default:
                     return "<br>PDI: <a id=\"port" + portNum + "/pdi\"></a>";
@@ -570,6 +582,34 @@
                                     }
 
                                     document.getElementById("port" + portNum + "/signal").innerHTML = "&nbspSS1: " + sSignal1 + "   /   SS2: " + sSignal2;
+                                    break;
+
+                                case "RW+Len+Data":
+                                    var sRead = IOLMref["raw"][0] & 0b0001;
+                                    var sWrite = (IOLMref["raw"][0] & 0b0010) >> 1;
+                                    var sTaskActive = (IOLMref["raw"][0] & 0b0100) >> 2;
+                                    var sError = (IOLMref["raw"][0] & 0b1000) >> 3;
+                                    var sLen = IOLMref["raw"][1];
+                                    var sData = IOLMref["raw"].slice(4, 32);
+
+                                    if (sError == 1) {
+                                        document.getElementById("port" + portNum + "/mode").innerHTML = "&nbspError&nbsp";
+                                        document.getElementById("port" + portNum + "/mode").style.backgroundColor = "red";
+                                    } else if (sTaskActive == 1) {
+                                        if (sRead == 1) {
+                                            document.getElementById("port" + portNum + "/mode").innerHTML = "&nbspReading TAG&nbsp";
+                                        } else if (sWrite == 1) {
+                                            document.getElementById("port" + portNum + "/mode").innerHTML = "&nbspTAG was Written&nbsp";
+                                        } else {
+                                            document.getElementById("port" + portNum + "/mode").innerHTML = "&nbspActive - No TAG present&nbsp";
+                                        }
+                                    } else {
+                                        document.getElementById("port" + portNum + "/mode").innerHTML = "&nbspInactive&nbsp";
+                                        document.getElementById("port" + portNum + "/mode").style.backgroundColor = "gray";
+                                    }
+                                    
+                                    document.getElementById("port" + portNum + "/len").innerHTML = sLen;
+                                    document.getElementById("port" + portNum + "/pdi").innerHTML = sData.slice(0,sLen);                               
                                     break;
 
                                 default:
