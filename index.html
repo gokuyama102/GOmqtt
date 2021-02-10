@@ -25,35 +25,10 @@
         padding: 0;
     }
 
-    body::-webkit-scrollbar {
-        width: 0.25rem;
-    }
 
-    body::-webkit-scrollbar-track {
-        background: #ffffff;
-    }
-
-    body::-webkit-scrollbar-thumb {
-        background: black;
-    }
-
-    #portMonitorFrame {
-        display: grid;
-        grid-gap: 1rem;
-        justify-content: center;
-    }
-
-    main {
-        margin-top: 7rem;
-        padding: 1rem;
-    }
 
     h1 {
-        position: fixed;
-        top: 0;
-        left: 0;
-        height: 2rem;
-        width: 100vw;
+
         margin: 0 auto;
         background-color: var(--bg-gray-primary);
         color: #fff;
@@ -169,8 +144,6 @@
         display: flex;
     }
 
-
-
     .nav-item:last-child {
         margin-top: auto;
     }
@@ -213,10 +186,20 @@
         transition: var(--transition-speed);
     }
 
-    /* Extra small devices (phones, 600px and down) */
     @media only screen and (max-width: 600px) {
+
+        body::-webkit-scrollbar,
+        body::-webkit-scrollbar-track,
+        body::-webkit-scrollbar-thumb {
+            display: none;
+        }
+
+        main {
+            margin: 0 0 6rem;
+        }
+
         #portMonitorFrame {
-            grid-template-columns: auto;
+            grid-template-columns: minmax(20rem,90%);
         }
 
         .logo {
@@ -235,19 +218,45 @@
             align-items: center;
             height: 100%;
         }
+
         .nav-item {
             margin: auto;
         }
+
+        .nav-link {
+            justify-content: center;
+        }
     }
 
-    /* Small devices (portrait tablets and large phones, 600px and up) */
     @media only screen and (min-width: 600px) {
         #portMonitorFrame {
-            grid-template-columns: auto;
+            grid-template-columns: minmax(20rem , 35rem);
         }
 
         main {
             margin-left: 5rem;
+            margin-top: 7rem;
+            padding: 1rem;
+        }
+
+        body::-webkit-scrollbar {
+            width: 0.25rem;
+        }
+
+        body::-webkit-scrollbar-track {
+            background: #ffffff;
+        }
+
+        body::-webkit-scrollbar-thumb {
+            background: black;
+        }
+
+        h1 {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2rem;
+            width: 100vw;
         }
 
         .navbar {
@@ -258,14 +267,11 @@
             transition: width 600ms ease;
         }
 
-
-
         .navbar-nav {
             flex-direction: column;
             align-items: center;
             height: 100%;
         }
-
 
         .logo {
             font-weight: bold;
@@ -319,7 +325,7 @@
 
     @media only screen and (min-width: 1080px) {
         #portMonitorFrame {
-            grid-template-columns: auto auto;
+            grid-template-columns: minmax(20rem , 35rem) minmax(20rem , 35rem);
         }
     }
 
@@ -332,18 +338,18 @@
         word-wrap: break-word;
     }
 
+    #portMonitorFrame {
+        display: grid;
+        grid-gap: 1rem;
+        justify-content: center;
+    }
+
     .framePort {
-        width: 420px;
+        
         height: 130px;
         background-color: lightgray;
         padding: 15px;
         margin: 10px;
-    }
-
-    #coluna1 {
-        float: left;
-        width: 470px;
-
     }
 
     .portImage {
@@ -358,11 +364,6 @@
 
     .port {
         display: inline;
-    }
-
-    #coluna2 {
-        float: right;
-        width: 480px;
     }
 
     #PortMonitor {
