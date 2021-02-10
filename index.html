@@ -21,9 +21,6 @@
     body {
         color: black;
         background-color: white;
-        /*padding-left: 3%;
-        padding-right: 3%;
-        width: 960px;*/
         margin: 0;
         padding: 0;
     }
@@ -40,9 +37,14 @@
         background: black;
     }
 
+    #portMonitorFrame {
+        display: grid;
+        grid-gap: 1rem;
+        justify-content: center;
+    }
+
     main {
         margin-top: 7rem;
-        margin-left: 5rem;
         padding: 1rem;
     }
 
@@ -93,7 +95,6 @@
         margin: 1rem;
     }
 
-
     .formtitle {
         text-align: center;
         font-weight: bolder;
@@ -121,7 +122,6 @@
         margin: 0 auto 1rem;
     }
 
-
     form textarea {
         padding: 0.25rem;
         width: 20rem;
@@ -142,7 +142,6 @@
         background: black;
     }
 
-
     form .inline {
         width: 5rem;
     }
@@ -156,51 +155,10 @@
 
     }
 
-    .logo {
-        font-weight: bold;
-        text-transform: uppercase;
-        margin-bottom: 1rem;
-        text-align: center;
-        color: var(--text-secondary);
-        background: var(--bg-secondary);
-        font-size: 1.5rem;
-        letter-spacing: 0.3ch;
-        width: 100%;
-    }
-
-    .logo svg {
-        transform: rotate(0deg);
-        transition: var(--transition-speed);
-    }
-
-    .logo-text {
-        color: var(--text-primary);
-        display: inline;
-        position: absolute;
-        left: -999px;
-        transition: var(--transition-speed);
-    }
-
-    .navbar:hover .logo svg {
-        transform: rotate(-180deg);
-    }
-
-    .navbar:hover .logo-text {
-        left: 0px;
-    }
-
-    .navbar:hover .logo svg {
-        margin-left: 16rem;
-    }
-
     .navbar {
-        width: 5rem;
-        height: 100vh;
-        top: 0;
-        left: 0;
         position: fixed;
         background-color: var(--bg-primary);
-        transition: width 600ms ease;
+
         overflow: hidden;
     }
 
@@ -209,14 +167,9 @@
         padding: 0;
         margin: 0;
         display: flex;
-        flex-direction: column;
-        align-items: center;
-        height: 100%;
     }
 
-    .nav-item {
-        width: 100%;
-    }
+
 
     .nav-item:last-child {
         margin-top: auto;
@@ -231,7 +184,6 @@
     }
 
     .nav-link:hover {
-        filter: grayscale(0%) opacity(1);
         background: var(--bg-secondary);
         color: var(--text-secondary);
     }
@@ -261,18 +213,123 @@
         transition: var(--transition-speed);
     }
 
-    .navbar:hover {
-        width: 20rem;
+    /* Extra small devices (phones, 600px and down) */
+    @media only screen and (max-width: 600px) {
+        #portMonitorFrame {
+            grid-template-columns: auto;
+        }
+
+        .logo {
+            display: none;
+        }
+
+        .navbar {
+            width: 100vW;
+            height: 5rem;
+            bottom: 0;
+            left: 0;
+        }
+
+        .navbar-nav {
+            flex-direction: row;
+            align-items: center;
+            height: 100%;
+        }
+        .nav-item {
+            margin: auto;
+        }
     }
 
-    .navbar:hover .link-text {
-        display: block;
+    /* Small devices (portrait tablets and large phones, 600px and up) */
+    @media only screen and (min-width: 600px) {
+        #portMonitorFrame {
+            grid-template-columns: auto;
+        }
+
+        main {
+            margin-left: 5rem;
+        }
+
+        .navbar {
+            width: 5rem;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            transition: width 600ms ease;
+        }
+
+
+
+        .navbar-nav {
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+        }
+
+
+        .logo {
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            text-align: center;
+            color: var(--text-secondary);
+            background: var(--bg-secondary);
+            font-size: 1.5rem;
+            letter-spacing: 0.3ch;
+            width: 100%;
+        }
+
+        .logo svg {
+            transform: rotate(0deg);
+            transition: var(--transition-speed);
+        }
+
+        .logo-text {
+            color: var(--text-primary);
+            display: inline;
+            position: absolute;
+            left: -999px;
+            transition: var(--transition-speed);
+        }
+
+        .nav-item {
+            width: 100%;
+        }
+
+        .navbar:hover .logo svg {
+            transform: rotate(-180deg);
+        }
+
+        .navbar:hover .logo-text {
+            left: 0px;
+        }
+
+        .navbar:hover .logo svg {
+            margin-left: 16rem;
+        }
+
+        .navbar:hover {
+            width: 20rem;
+        }
+
+        .navbar:hover .link-text {
+            display: block;
+        }
     }
+
+    @media only screen and (min-width: 1080px) {
+        #portMonitorFrame {
+            grid-template-columns: auto auto;
+        }
+    }
+
 
     .geral {
-        width: 960px;
+        display: grid;
+        width: auto;
         margin: auto;
         padding-top: 0;
+        word-wrap: break-word;
     }
 
     .framePort {
@@ -377,126 +434,112 @@
 
 
     <main>
-
-
         <div class="geral" id="PortMonitor">
             <h1>IOLM Port Monitor</h1>
-            <div id="principal">
-                <div id="coluna1">
-                    <div id="coluna1-2">
-                        <div id="framePort1" class="framePort">
-                            <img class="portImage" id="pImage1"
-                                src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D" width=100 height=110>
-                            <p id="port1" class="port">
-                                <b>Port 1</b>
-                                <br>Device: <a id="port1/prodname"></a>
-                                <br>Serial: <a id="port1/serial"></a>
-                                <br>Status: <a id="port1/status"></a>
-                                <diagnostic id="diagPort1">
-                                    <br>PDI: <a id="port1/pdi"></a>
-                                </diagnostic>
-                            </p>
-                        </div>
-                        <div id="framePort3" class="framePort">
-                            <img class="portImage" id="pImage3"
-                                src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D" width=100 height=110>
-                            <p id="port3" class="port">
-                                <b>Port 3</b>
-                                <br>Device: <a id="port3/prodname"></a>
-                                <br>Serial: <a id="port3/serial"></a>
-                                <br>Status: <a id="port3/status"></a>
-                                <diagnostic id="diagPort3">
-                                    <br>PDI: <a id="port3/pdi"></a>
-                                </diagnostic>
-                            </p>
-                        </div>
-                        <div id="framePort5" class="framePort">
-                            <img class="portImage" id="pImage5"
-                                src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D" width=100 height=110>
-                            <p id="port5" class="port">
-                                <b>Port 5</b>
-                                <br>Device: <a id="port5/prodname"></a>
-                                <br>Serial: <a id="port5/serial"></a>
-                                <br>Status: <a id="port5/status"></a>
-                                <diagnostic id="diagPort5">
-                                    <br>PDI: <a id="port5/pdi"></a>
-                                </diagnostic>
-                            </p>
-                        </div>
-                        <div id="framePort7" class="framePort">
-                            <img class="portImage" id="pImage7"
-                                src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D" width=100 height=110>
-                            <p id="port7" class="port">
-                                <b>Port 7</b>
-                                <br>Device: <a id="port7/prodname"></a>
-                                <br>Serial: <a id="port7/serial"></a>
-                                <br>Status: <a id="port7/status"></a>
-                                <diagnostic id="diagPort7">
-                                    <br>PDI: <a id="port7/pdi"></a>
-                                </diagnostic>
-                            </p>
-                        </div>
-                    </div>
-
+            <div id="portMonitorFrame">
+                <div id="framePort1" class="framePort">
+                    <img class="portImage" id="pImage1"
+                        src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D" width=100 height=110>
+                    <p id="port1" class="port">
+                        <b>Port 1</b>
+                        <br>Device: <a id="port1/prodname"></a>
+                        <br>Serial: <a id="port1/serial"></a>
+                        <br>Status: <a id="port1/status"></a>
+                        <diagnostic id="diagPort1">
+                            <br>PDI: <a id="port1/pdi"></a>
+                        </diagnostic>
+                    </p>
                 </div>
-                <div id="coluna2">
-                    <div id="coluna2-1">
-
-                    </div>
-                    <div id="coluna2-2">
-                        <div id="framePort2" class="framePort">
-                            <img class="portImage" id="pImage2"
-                                src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D" width=100 height=110>
-                            <p id="port2" class="port">
-                                <b>Port 2</b>
-                                <br>Device: <a id="port2/prodname"></a>
-                                <br>Serial: <a id="port2/serial"></a>
-                                <br>Status: <a id="port2/status"></a>
-                                <diagnostic id="diagPort2">
-                                    <br>PDI: <a id="port2/pdi"></a>
-                                </diagnostic>
-                            </p>
-                        </div>
-                        <div id="framePort4" class="framePort">
-                            <img class="portImage" id="pImage4"
-                                src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D" width=100 height=110>
-                            <p id="port4" class="port">
-                                <b>Port 4</b>
-                                <br>Device: <a id="port4/prodname"></a>
-                                <br>Serial: <a id="port4/serial"></a>
-                                <br>Status: <a id="port4/status"></a>
-                                <diagnostic id="diagPort4">
-                                    <br>PDI: <a id="port4/pdi"></a>
-                                </diagnostic>
-                            </p>
-                        </div>
-                        <div id="framePort6" class="framePort">
-                            <img class="portImage" id="pImage6"
-                                src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D" width=100 height=110>
-                            <p id="port6" class="port">
-                                <b>Port 6</b>
-                                <br>Device: <a id="port6/prodname"></a>
-                                <br>Serial: <a id="port6/serial"></a>
-                                <br>Status: <a id="port6/status"></a>
-                                <diagnostic id="diagPort6">
-                                    <br>PDI: <a id="port6/pdi"></a>
-                                </diagnostic>
-                            </p>
-                        </div>
-                        <div id="framePort8" class="framePort">
-                            <img class="portImage" id="pImage8"
-                                src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D" width=100 height=110>
-                            <p id="port8" class="port">
-                                <b>Port 8</b>
-                                <br>Device: <a id="port8/prodname"></a>
-                                <br>Serial: <a id="port8/serial"></a>
-                                <br>Status: <a id="port8/status"></a>
-                                <diagnostic id="diagPort8">
-                                    <br>PDI: <a id="port8/pdi"></a>
-                                </diagnostic>
-                            </p>
-                        </div>
-                    </div>
+                <div id="framePort2" class="framePort">
+                    <img class="portImage" id="pImage2"
+                        src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D" width=100 height=110>
+                    <p id="port2" class="port">
+                        <b>Port 2</b>
+                        <br>Device: <a id="port2/prodname"></a>
+                        <br>Serial: <a id="port2/serial"></a>
+                        <br>Status: <a id="port2/status"></a>
+                        <diagnostic id="diagPort2">
+                            <br>PDI: <a id="port2/pdi"></a>
+                        </diagnostic>
+                    </p>
+                </div>
+                <div id="framePort3" class="framePort">
+                    <img class="portImage" id="pImage3"
+                        src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D" width=100 height=110>
+                    <p id="port3" class="port">
+                        <b>Port 3</b>
+                        <br>Device: <a id="port3/prodname"></a>
+                        <br>Serial: <a id="port3/serial"></a>
+                        <br>Status: <a id="port3/status"></a>
+                        <diagnostic id="diagPort3">
+                            <br>PDI: <a id="port3/pdi"></a>
+                        </diagnostic>
+                    </p>
+                </div>
+                <div id="framePort4" class="framePort">
+                    <img class="portImage" id="pImage4"
+                        src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D" width=100 height=110>
+                    <p id="port4" class="port">
+                        <b>Port 4</b>
+                        <br>Device: <a id="port4/prodname"></a>
+                        <br>Serial: <a id="port4/serial"></a>
+                        <br>Status: <a id="port4/status"></a>
+                        <diagnostic id="diagPort4">
+                            <br>PDI: <a id="port4/pdi"></a>
+                        </diagnostic>
+                    </p>
+                </div>
+                <div id="framePort5" class="framePort">
+                    <img class="portImage" id="pImage5"
+                        src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D" width=100 height=110>
+                    <p id="port5" class="port">
+                        <b>Port 5</b>
+                        <br>Device: <a id="port5/prodname"></a>
+                        <br>Serial: <a id="port5/serial"></a>
+                        <br>Status: <a id="port5/status"></a>
+                        <diagnostic id="diagPort5">
+                            <br>PDI: <a id="port5/pdi"></a>
+                        </diagnostic>
+                    </p>
+                </div>
+                <div id="framePort6" class="framePort">
+                    <img class="portImage" id="pImage6"
+                        src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D" width=100 height=110>
+                    <p id="port6" class="port">
+                        <b>Port 6</b>
+                        <br>Device: <a id="port6/prodname"></a>
+                        <br>Serial: <a id="port6/serial"></a>
+                        <br>Status: <a id="port6/status"></a>
+                        <diagnostic id="diagPort6">
+                            <br>PDI: <a id="port6/pdi"></a>
+                        </diagnostic>
+                    </p>
+                </div>
+                <div id="framePort7" class="framePort">
+                    <img class="portImage" id="pImage7"
+                        src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D" width=100 height=110>
+                    <p id="port7" class="port">
+                        <b>Port 7</b>
+                        <br>Device: <a id="port7/prodname"></a>
+                        <br>Serial: <a id="port7/serial"></a>
+                        <br>Status: <a id="port7/status"></a>
+                        <diagnostic id="diagPort7">
+                            <br>PDI: <a id="port7/pdi"></a>
+                        </diagnostic>
+                    </p>
+                </div>
+                <div id="framePort8" class="framePort">
+                    <img class="portImage" id="pImage8"
+                        src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D" width=100 height=110>
+                    <p id="port8" class="port">
+                        <b>Port 8</b>
+                        <br>Device: <a id="port8/prodname"></a>
+                        <br>Serial: <a id="port8/serial"></a>
+                        <br>Status: <a id="port8/status"></a>
+                        <diagnostic id="diagPort8">
+                            <br>PDI: <a id="port8/pdi"></a>
+                        </diagnostic>
+                    </p>
                 </div>
             </div>
         </div>
@@ -579,7 +622,6 @@
             <li class="nav-item" onclick="MenuPortStatus()">
                 <a href="#" class="nav-link">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
-                        <!-- Font Awesome Free 5.15.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) -->
                         <path fill="currentColor"
                             d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"
                             class="fa-primary" />
@@ -591,7 +633,6 @@
             <li class="nav-item">
                 <a href="#" class="nav-link" onclick="MenuDataExplorer()">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                        <!-- Font Awesome Free 5.15.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) -->
                         <path fill="currentColor"
                             d="M16 128h416c8.84 0 16-7.16 16-16V48c0-8.84-7.16-16-16-16H16C7.16 32 0 39.16 0 48v64c0 8.84 7.16 16 16 16zm480 80H80c-8.84 0-16 7.16-16 16v64c0 8.84 7.16 16 16 16h416c8.84 0 16-7.16 16-16v-64c0-8.84-7.16-16-16-16zm-64 176H16c-8.84 0-16 7.16-16 16v64c0 8.84 7.16 16 16 16h416c8.84 0 16-7.16 16-16v-64c0-8.84-7.16-16-16-16z"
                             class="fa-primary" />
