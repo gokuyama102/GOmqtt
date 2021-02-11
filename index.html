@@ -199,7 +199,7 @@
         }
 
         #portMonitorFrame {
-            grid-template-columns: minmax(20rem,90%);
+            grid-template-columns: minmax(20rem, 90%);
         }
 
         .logo {
@@ -230,7 +230,7 @@
 
     @media only screen and (min-width: 600px) {
         #portMonitorFrame {
-            grid-template-columns: minmax(20rem , 35rem);
+            grid-template-columns: minmax(20rem, 35rem);
         }
 
         main {
@@ -325,7 +325,7 @@
 
     @media only screen and (min-width: 1080px) {
         #portMonitorFrame {
-            grid-template-columns: minmax(20rem , 35rem) minmax(20rem , 35rem);
+            grid-template-columns: minmax(20rem, 35rem) minmax(20rem, 35rem);
         }
     }
 
@@ -345,7 +345,7 @@
     }
 
     .framePort {
-        
+
         height: 130px;
         background-color: lightgray;
         padding: 15px;
@@ -758,6 +758,10 @@
                 + ":" + new Date().getSeconds().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false });
         }
 
+        var t = "<strong>" + timestamp() + " Client started. Waiting for a new connection!</strong>";
+
+        log.innerHTML = t + "<br><br>" + log.innerHTML;
+
         function connectBroker() {
             HideSettings();
             username = document.getElementById("fname").value;
@@ -776,7 +780,7 @@
 
             client.onConnectionLost = onConnectionLost;
             client.onMessageArrived = onMessageArrived;
-            var t = "<b>" + timestamp() + " Trying to connect to the broker</b>";
+            var t = "<strong>" + timestamp() + " Trying to connect to the broker</strong>";
 
             log.innerHTML = t + "<br><br>" + log.innerHTML;
             client.connect(options);
@@ -784,13 +788,14 @@
 
         var rISDU
         function onConnect() {
-            // Once a connection has been made, make a subscription and send a message.
             console.log("onConnect");
-            var t = "<b>" + timestamp() + " Connected to the broker!</b>";
+            var t = "<strong>" + timestamp() + " Connected to the broker!</strong>";
             log.innerHTML = t + "<br><br>" + log.innerHTML;
-            var t = "<b>" + timestamp() + " Subscribing to '#' </b>";
+            var t = "<strong>" + timestamp() + " Subscribing to '#' </strong>";
             log.innerHTML = t + "<br><br>" + log.innerHTML;
             client.subscribe("#");
+            var t = "<strong>" + timestamp() + " Waiting for new data </strong>";
+            log.innerHTML = t + "<br><br>" + log.innerHTML;
             //rISDU = setInterval(requestISDU, 10000);
 
         }
@@ -802,7 +807,7 @@
             mmessage.retain = retain;
             client.send(mmessage);
             console.log(mmessage);
-            t = "<strong>" + timestamp() + " Published at " + mmessage.destinationName + "</strong>: " + mmessage.payloadString;
+            t = "<strong>" + timestamp() + " Trying to publish at " + mmessage.destinationName + "</strong>: " + mmessage.payloadString;
             log.innerHTML = t + "<br><br>" + log.innerHTML;
         }
 
@@ -824,7 +829,7 @@
             clearInterval(rISDU);
             if (responseObject.errorCode !== 0) {
                 console.log("onConnectionLost:" + responseObject.errorMessage);
-                var t = "<b>" + timestamp() + " Lost connection to the broker!</b> Refresh the page to start again.";
+                var t = "<strong>" + timestamp() + " Lost connection to the broker!</strong>";
                 log.innerHTML = t + "<br><br>" + log.innerHTML;
             }
         }
@@ -964,7 +969,7 @@
             }
             //if yes, update data
             if (document.getElementById(message.destinationName) != null) {
-                document.getElementById(message.destinationName).innerHTML = message.payloadString;
+                document.getElementById(message.destinationName).innerHTML = "<pre>"+JSON.stringify(JSON.parse(message.payloadString), null, 4)+"</pre>";
             }
 
             //update IOLM Status
