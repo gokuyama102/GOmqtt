@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, 
     user-scalable=0">
 </head>
+
 <style>
     :root {
         font-size: 16px;
@@ -37,9 +38,12 @@
         margin: 0 auto;
         background-color: var(--bg-gray-primary);
         color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         text-align: center;
         font-size: 2rem;
-        padding: 1.5rem;
+
     }
 
     p {
@@ -154,7 +158,6 @@
     .nav-link {
         display: flex;
         align-items: center;
-        height: 5rem;
         color: var(--text-primary);
         text-decoration: none;
     }
@@ -233,9 +236,108 @@
         .nav-link {
             justify-content: center;
         }
+
+        .nav-link {
+            height: 5rem;
+        }
+
+
+        h1 {
+            height: 4rem;
+        }
     }
 
     @media only screen and (min-width: 600px) {
+
+        @media only screen and (max-height: 450px) {
+            .logo {
+                display: none;
+            }
+
+            .navbar {
+                width: 4rem;
+            }
+
+            h1 {
+                height: 4rem;
+            }
+
+            .nav-link {
+                height: 4rem;
+            }
+        }
+
+        @media only screen and (min-height: 450px) {
+
+            .navbar {
+                width: 5rem;
+            }
+
+            .nav-link {
+                height: 5rem;
+            }
+
+            h1 {
+                height: 5rem;
+            }
+
+            .logo {
+                font-weight: bold;
+                text-transform: uppercase;
+                margin-bottom: 1rem;
+                text-align: center;
+                color: var(--text-secondary);
+                background: var(--bg-secondary);
+                font-size: 1.5rem;
+                letter-spacing: 0.3ch;
+                width: 100%;
+            }
+
+            .logo svg {
+                transform: rotate(0deg);
+                transition: var(--transition-speed);
+            }
+
+            .logo-text {
+                color: var(--text-primary);
+                display: inline;
+                position: absolute;
+                left: -500px;
+                transition: var(--transition-speed);
+            }
+
+            .nav-item {
+                width: 100%;
+            }
+
+            .navbar:hover .logo svg {
+                transform: rotate(-180deg);
+            }
+
+            .navbar:hover .logo-text {
+                left: 0px;
+            }
+
+            .navbar:hover .logo svg {
+                margin-left: 16rem;
+            }
+
+            .navbar:hover {
+                width: 20rem;
+            }
+
+            .navbar:hover .link-text {
+                display: block;
+            }
+
+        }
+
+        .navbar-nav {
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+        }
+
         #portMonitorFrame {
             grid-template-columns: minmax(20rem, 35rem);
         }
@@ -262,7 +364,6 @@
             position: fixed;
             top: 0;
             left: 0;
-            height: 2rem;
             width: 100vw;
         }
 
@@ -273,67 +374,13 @@
         }
 
         .navbar {
-            width: 5rem;
             height: 100vh;
             top: 0;
             left: 0;
             transition: width 600ms ease;
         }
 
-        .navbar-nav {
-            flex-direction: column;
-            align-items: center;
-            height: 100%;
-        }
 
-        .logo {
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-bottom: 1rem;
-            text-align: center;
-            color: var(--text-secondary);
-            background: var(--bg-secondary);
-            font-size: 1.5rem;
-            letter-spacing: 0.3ch;
-            width: 100%;
-        }
-
-        .logo svg {
-            transform: rotate(0deg);
-            transition: var(--transition-speed);
-        }
-
-        .logo-text {
-            color: var(--text-primary);
-            display: inline;
-            position: absolute;
-            left: -500px;
-            transition: var(--transition-speed);
-        }
-
-        .nav-item {
-            width: 100%;
-        }
-
-        .navbar:hover .logo svg {
-            transform: rotate(-180deg);
-        }
-
-        .navbar:hover .logo-text {
-            left: 0px;
-        }
-
-        .navbar:hover .logo svg {
-            margin-left: 16rem;
-        }
-
-        .navbar:hover {
-            width: 20rem;
-        }
-
-        .navbar:hover .link-text {
-            display: block;
-        }
     }
 
     @media only screen and (min-width: 1080px) {
@@ -380,7 +427,7 @@
     }
 
     .port {
-        min-height:8rem
+        min-height: 8rem
     }
 
     #PortMonitor {
@@ -451,7 +498,7 @@
             <div id="portMonitorFrame">
                 <div id="framePort1" class="framePort">
                     <img class="portImage" id="pImage1"
-                        src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D" >
+                        src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D">
                     <p id="port1" class="port">
                         <strong>Port 1</strong>
                         <br>Device: <a id="port1/prodname"></a>
@@ -477,7 +524,7 @@
                 </div>
                 <div id="framePort3" class="framePort">
                     <img class="portImage" id="pImage3"
-                        src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D" >
+                        src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D">
                     <p id="port3" class="port">
                         <strong>Port 3</strong>
                         <br>Device: <a id="port3/prodname"></a>
@@ -977,7 +1024,7 @@
             }
             //if yes, update data
             if (document.getElementById(message.destinationName) != null) {
-                document.getElementById(message.destinationName).innerHTML = JSON.stringify(JSON.parse(message.payloadString), null, 4).replace(/\n/g, "<br>").replace(/ /g,"&nbsp");
+                document.getElementById(message.destinationName).innerHTML = JSON.stringify(JSON.parse(message.payloadString), null, 4).replace(/\n/g, "<br>").replace(/ /g, "&nbsp");
             }
 
             //update IOLM Status
