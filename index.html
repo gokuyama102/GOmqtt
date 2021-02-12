@@ -408,8 +408,8 @@
 
     .framePort {
         display: grid;
-        grid-template-columns: minmax(5rem, 25%) minmax(10rem, 30rem);
-        height: 130px;
+        grid-template-columns: minmax(4rem, 25%) minmax(10rem, 30rem);
+        height: minmax(130px,200px);
         background-color: lightgray;
         padding: 1rem;
         margin: 1rem;
@@ -800,10 +800,17 @@
             Publish.style.display = "none";
         }
 
+
+
     </script>
 
     <script type="text/javascript">//MQTT stuff
-
+        var cGreen = "green";
+        var cYellow = "yellow";
+        var cRed="red";
+        var cGreyLight="lightgrey";
+        var cGreyDark="darkgrey";
+        var cOrange="orange";
         var username = "GO_RO";//prompt("Username:", "GO_RO");
         var password = "GO_RO";
         var hostname = "amazing-electrician.cloudmqtt.com";
@@ -1060,13 +1067,13 @@
 
                         switch (document.getElementById("port" + portNum + "/status").innerHTML) {
                             case "Inactive - CommLost":
-                                mPort.style.backgroundColor = "red";
+                                mPort.style.backgroundColor = cRed;
                                 break;
                             case "Inactive - Init":
-                                mPort.style.backgroundColor = "lightgrey";
+                                mPort.style.backgroundColor = cGreyDark;
                                 break;
                             default:
-                                mPort.style.backgroundColor = "white";
+                                mPort.style.backgroundColor = cGreyLight;
                                 break;
                         }
 
@@ -1083,7 +1090,7 @@
 
                                     if (sStability == 1) {
                                         document.getElementById("port" + portNum + "/stability").innerHTML = "&nbspAlarm&nbsp";
-                                        document.getElementById("port" + portNum + "/stability").style.backgroundColor = "yellow";
+                                        document.getElementById("port" + portNum + "/stability").style.backgroundColor = cYellow;
                                     } else {
                                         document.getElementById("port" + portNum + "/stability").innerHTML = "&nbspOK&nbsp";
                                         document.getElementById("port" + portNum + "/stability").style.backgroundColor = "transparent";
@@ -1097,10 +1104,10 @@
 
                                     if (sDistance == 16383) {
                                         document.getElementById("port" + portNum + "/pdi").innerHTML = "&nbspNo Echo&nbsp";
-                                        document.getElementById("port" + portNum + "/pdi").style.backgroundColor = "red";
+                                        document.getElementById("port" + portNum + "/pdi").style.backgroundColor = cRed;
                                     } else {
                                         document.getElementById("port" + portNum + "/pdi").innerHTML = "&nbsp" + sDistance + " mm&nbsp";
-                                        document.getElementById("port" + portNum + "/pdi").style.backgroundColor = "green";
+                                        document.getElementById("port" + portNum + "/pdi").style.backgroundColor = cGreen;
                                     }
 
                                     document.getElementById("port" + portNum + "/signal").innerHTML = "&nbspSS1: " + sSignal1 + "   /   SS2: " + sSignal2;
@@ -1114,19 +1121,19 @@
 
                                     if (sDistance == 4092) {
                                         document.getElementById("port" + portNum + "/pdi").innerHTML = "&nbspInsufficient signal quality&nbsp";
-                                        document.getElementById("port" + portNum + "/pdi").style.backgroundColor = "red";
+                                        document.getElementById("port" + portNum + "/pdi").style.backgroundColor = cRed;
                                     } else if (sDistance == 4093) {
                                         document.getElementById("port" + portNum + "/pdi").innerHTML = "&nbspBelow Detection Range&nbsp";
-                                        document.getElementById("port" + portNum + "/pdi").style.backgroundColor = "red";
+                                        document.getElementById("port" + portNum + "/pdi").style.backgroundColor = cRed;
                                     } else if (sDistance == 4094) {
                                         document.getElementById("port" + portNum + "/pdi").innerHTML = "&nbspAbove Detection Range&nbsp";
-                                        document.getElementById("port" + portNum + "/pdi").style.backgroundColor = "red";
+                                        document.getElementById("port" + portNum + "/pdi").style.backgroundColor = cRed;
                                     } else if (sDistance == 4095) {
                                         document.getElementById("port" + portNum + "/pdi").innerHTML = "&nbspNo Damping Element detected&nbsp";
-                                        document.getElementById("port" + portNum + "/pdi").style.backgroundColor = "red";
+                                        document.getElementById("port" + portNum + "/pdi").style.backgroundColor = cRed;
                                     } else {
                                         document.getElementById("port" + portNum + "/pdi").innerHTML = "&nbsp" + (sDistance * 0.05).toFixed(2) + " mm&nbsp";
-                                        document.getElementById("port" + portNum + "/pdi").style.backgroundColor = "green";
+                                        document.getElementById("port" + portNum + "/pdi").style.backgroundColor = cGreen;
                                     }
 
                                     document.getElementById("port" + portNum + "/signal").innerHTML = "&nbspSS1: " + sSignal1 + "   /   SS2: " + sSignal2 + "   /   SS3: " + sSignal3;
@@ -1150,16 +1157,16 @@
 
                                     if (sQuality == 3) {
                                         document.getElementById("port" + portNum + "/quality").innerHTML = "&nbspExcellent&nbsp";
-                                        document.getElementById("port" + portNum + "/quality").style.backgroundColor = "green";
+                                        document.getElementById("port" + portNum + "/quality").style.backgroundColor = cGreen;
                                     } else if (sQuality == 2) {
                                         document.getElementById("port" + portNum + "/quality").innerHTML = "&nbspGood&nbsp";
-                                        document.getElementById("port" + portNum + "/quality").style.backgroundColor = "yellow";
+                                        document.getElementById("port" + portNum + "/quality").style.backgroundColor = cYellow;
                                     } else if (sQuality == 1) {
                                         document.getElementById("port" + portNum + "/quality").innerHTML = "&nbspAcceptable&nbsp";
-                                        document.getElementById("port" + portNum + "/quality").style.backgroundColor = "orange";
+                                        document.getElementById("port" + portNum + "/quality").style.backgroundColor = cOrange;
                                     } else {
                                         document.getElementById("port" + portNum + "/quality").innerHTML = "&nbspInsufficient&nbsp";
-                                        document.getElementById("port" + portNum + "/quality").style.backgroundColor = "red";
+                                        document.getElementById("port" + portNum + "/quality").style.backgroundColor = cRed;
                                     }
 
                                     document.getElementById("port" + portNum + "/signal").innerHTML = "&nbspSS1: " + sSignal1 + "   /   SS2: " + sSignal2;
@@ -1175,7 +1182,7 @@
 
                                     if (sError == 1) {
                                         document.getElementById("port" + portNum + "/mode").innerHTML = "&nbspError&nbsp";
-                                        document.getElementById("port" + portNum + "/mode").style.backgroundColor = "red";
+                                        document.getElementById("port" + portNum + "/mode").style.backgroundColor = cRed;
                                     } else if (sTaskActive == 1) {
                                         if (sRead == 1) {
                                             document.getElementById("port" + portNum + "/mode").innerHTML = "&nbspReading TAG&nbsp";
@@ -1186,7 +1193,7 @@
                                         }
                                     } else {
                                         document.getElementById("port" + portNum + "/mode").innerHTML = "&nbspInactive&nbsp";
-                                        document.getElementById("port" + portNum + "/mode").style.backgroundColor = "gray";
+                                        document.getElementById("port" + portNum + "/mode").style.backgroundColor = cGreyDark;
                                     }
 
                                     document.getElementById("port" + portNum + "/len").innerHTML = sLen;
