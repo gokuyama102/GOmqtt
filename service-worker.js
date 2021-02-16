@@ -5,9 +5,8 @@ let filesToCache = [
   "service-worker.js",
   "images/icons-192.png",
   "images/icons-512.png",
+  "css/style.css",
   "manifest.json"
-  // add your assets here 
-  // ❗️❕donot add config.json here ❗️❕
 ];
 
 self.addEventListener("install", function (event) {
