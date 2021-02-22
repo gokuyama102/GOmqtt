@@ -338,19 +338,31 @@
 
 
 
+
+
     </script>
 
     <script type="text/javascript">//MQTT stuff
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+
         var cGreen = "green";
         var cYellow = "yellow";
         var cRed = "red";
         var cGreyLight = "lightgrey";
         var cGreyDark = "darkgrey";
         var cOrange = "orange";
-        var username = "GO_RO";//prompt("Username:", "GO_RO");
-        var password = "GO_RO";
-        var hostname = "amazing-electrician.cloudmqtt.com";
-        var port = 443;
+        var username = (urlParams.get('username') == null) ? "" : urlParams.get('username');
+        var password = (urlParams.get('password') == null) ? "" : urlParams.get('password');
+        var hostname = (urlParams.get('host') == null) ? "" : urlParams.get('host');
+        var port = (urlParams.get('port') == null) ? 443 : parseInt(urlParams.get('port'));
+        if (port == NaN) port = 443;
+
+        document.getElementById("fname").value = username;
+        document.getElementById("fpassword").value = password;
+        document.getElementById("fhost").value = hostname;
+        document.getElementById("fport").value = port;
+
         var IOLM = new Object();
         var IOLMBaseTopic = "";
         var log = document.getElementById("log");
