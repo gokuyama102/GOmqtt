@@ -7,6 +7,7 @@
         --bg-secondary: #247e6d;
         --bg-gray-primary: #3a3f3e;
         --bg-gray-secondary: #247e6d;
+        --color-red: #e96b6b;
         --transition-speed: 600ms
     }
 
@@ -37,99 +38,6 @@
 
     p {
         font-size: 1rem;
-    }
-
-    form {
-        background-color: var(--bg-primary);
-        padding: 3rem;
-        width: 25rem;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        -ms-transform: translate(-50%, -50%);
-        transform: translate(-50%, -50%);
-        box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.2), 0 10px 20px 0 rgba(0, 0, 0, 0.19);
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        user-select: none;
-    }
-    
-    .disableItem {
-        pointer-events: none;
-        opacity: 0.7;
-        filter: grayscale(100%);
-    }
-
-    form>* {
-        margin-bottom: 0.5rem;
-    }
-
-    .buttonrow {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-    }
-
-    .flexitem {
-        margin: 1rem;
-    }
-
-    .formtitle {
-        text-align: center;
-        font-weight: bolder;
-        font-size: 1.5rem;
-    }
-
-    form label {
-        color: var(--text-primary);
-        font-weight: bold;
-        text-align: left;
-    }
-
-    form .buttonrow {
-        display: flex;
-        flex-direction: row;
-        margin: auto;
-    }
-
-    form input, select {
-        border: none;
-        padding: 0.25rem;
-        width: 20rem;
-        margin: 0 auto 1rem;
-    }
-
-    form textarea {
-        padding: 0.25rem;
-        width: 20rem;
-        margin: 0 auto 1rem;
-        resize: none;
-        font-family: monospace;
-    }
-
-    textarea::-webkit-scrollbar {
-        width: 0.25rem;
-    }
-
-    textarea::-webkit-scrollbar-track {
-        background: #ffffff;
-    }
-
-    textarea::-webkit-scrollbar-thumb {
-        background: black;
-    }
-
-    form .inline {
-        width: 5rem;
-    }
-
-    form button {
-        background-color: var(--bg-gray-primary);
-        color: var(--text-primary);
-        border: none;
-        padding: 1rem;
-        margin: 0 auto;
     }
 
     .navbar {
