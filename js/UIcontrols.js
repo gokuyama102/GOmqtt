@@ -69,3 +69,12 @@ function foolProofing(ele) {
     default:
   }
 }
+
+function showStatus(text) {
+  document.getElementById("statusMessage").innerHTML = text;
+  document.getElementById("statusWindow").show();
+}
+
+function closeStatus() {
+  document.getElementById("statusWindow").close();
+}

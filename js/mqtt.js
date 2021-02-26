@@ -31,7 +31,7 @@ var log = document.getElementById("log");
 function setStatusBroker(setState) {
   statusBroker = setState;
   if (statusBroker) {
-    if (document.getElementById("fhost").value === "") {
+    if (document.getElementById("ftopic").value === "") {
       document.getElementById("fbtPublish").classList.add("disableItem");
     } else {
       document.getElementById("fbtPublish").classList.remove("disableItem");
@@ -68,19 +68,12 @@ function timestamp() {
       .toLocaleString("en-US", { minimumIntegerDigits: 2, useGrouping: false })
   );
 }
-
-var t =
-  "<strong>" +
-  timestamp() +
-  " Client started. Waiting for a new connection!</strong>";
-
-log.innerHTML = t + "<br><br>" + log.innerHTML;
+addNewLogEntry("Client started. Waiting for a new connection!");
 
 function connectBroker() {
   if (statusBroker) {
     client.disconnect();
-    var t = "<strong>" + timestamp() + " Disconnected from broker!</strong>";
-    log.innerHTML = t + "<br><br>" + log.innerHTML;
+    addNewLogEntry("Disconnected from broker!");
   } else {
     HideSettings();
     username = document.getElementById("fname").value;
@@ -101,9 +94,8 @@ function connectBroker() {
     };
     client.onConnectionLost = onConnectionLost;
     client.onMessageArrived = onMessageArrived;
-    var t =
-      "<strong>" + timestamp() + " Trying to connect to the broker</strong>";
-    log.innerHTML = t + "<br><br>" + log.innerHTML;
+    addNewLogEntry("Trying to connect to the broker");
+    showStatus("Connecting");
     client.connect(options);
   }
 }
@@ -112,13 +104,12 @@ function connectBroker() {
 function onConnect() {
   console.log("onConnect");
   setStatusBroker(true);
-  var t = "<strong>" + timestamp() + " Connected to the broker!</strong>";
-  log.innerHTML = t + "<br><br>" + log.innerHTML;
-  var t = "<strong>" + timestamp() + " Subscribing to '#' </strong>";
-  log.innerHTML = t + "<br><br>" + log.innerHTML;
+  addNewLogEntry("Connected to the broker!");
+  showStatus("Connected!");
+  addNewLogEntry("Subscribing to '#'");
   client.subscribe("#");
-  var t = "<strong>" + timestamp() + " Waiting for new data </strong>";
-  log.innerHTML = t + "<br><br>" + log.innerHTML;
+  addNewLogEntry("Waiting for new data");
+  setTimeout(closeStatus, 7000);
   //rISDU = setInterval(requestISDU, 10000);
 }
 
@@ -130,23 +121,15 @@ function publish(topic, message, qos, retain) {
     mmessage.retain = retain;
     client.send(mmessage);
     console.log(mmessage);
-    t =
-      "<strong>" +
-      timestamp() +
-      " Trying to publish at " +
-      mmessage.destinationName +
-      "</strong>: " +
-      mmessage.payloadString;
-    log.innerHTML = t + "<br><br>" + log.innerHTML;
+    addNewLogEntryWithValue(
+      "Trying to publish at " + mmessage.destinationName,
+      mmessage.payloadString
+    );
   } else {
-    t =
-      "<strong>" +
-      timestamp() +
-      " Failed to publish at " +
-      topic +
-      "!</strong> Please check if the message is a valid JSON: " +
-      message;
-    log.innerHTML = t + "<br><br>" + log.innerHTML;
+    addNewLogEntryWithValue(
+      "Failed to publish at " + topic + "!",
+      "Please check if the message is a valid JSON: " + message
+    );
   }
 }
 
@@ -172,11 +155,10 @@ function requestISDU() {
 function doFail(e) {
   console.log(e);
   setStatusBroker(false);
-  var t =
-    "<strong>" +
-    timestamp() +
-    " Failed to connect to the broker!</strong> Please, check if username is correct and if the broker is active. Refresh the page to try again.";
-  log.innerHTML = t + "<br><br>" + log.innerHTML;
+  addNewLogEntryWithValue(
+    "Failed to connect to the broker!",
+    "Please, check if username is correct and if the broker is active. Refresh the page to try again."
+  );
 }
 
 function onConnectionLost(responseObject) {
@@ -184,9 +166,7 @@ function onConnectionLost(responseObject) {
   setStatusBroker(false);
   if (responseObject.errorCode !== 0) {
     console.log("onConnectionLost:" + responseObject.errorMessage);
-    var t =
-      "<strong>" + timestamp() + " Lost connection to the broker!</strong>";
-    log.innerHTML = t + "<br><br>" + log.innerHTML;
+    addNewLogEntry("Lost connection to the broker!");
   }
 }
 
@@ -296,16 +276,20 @@ function addTemplate(prodName, portNum) {
   }
 }
 
+function addNewLogEntryWithValue(boldText, valueText) {
+  var text =
+    "<strong>" + timestamp() + " " + boldText + "</strong> " + valueText;
+  log.innerHTML = text + "<br><br>" + log.innerHTML;
+}
+
+function addNewLogEntry(boldText) {
+  var text = "<strong>" + timestamp() + " " + boldText + "</strong>";
+  log.innerHTML = text + "<br><br>" + log.innerHTML;
+}
+
 function onMessageArrived(message) {
   //Datalogger
-  t =
-    "<strong>" +
-    timestamp() +
-    " " +
-    message.destinationName +
-    "</strong>: " +
-    message.payloadString;
-  log.innerHTML = t + "<br><br>" + log.innerHTML;
+  addNewLogEntryWithValue(message.destinationName, message.payloadString);
 
   //Parsing IOLM data
   path = message.destinationName.split("/");

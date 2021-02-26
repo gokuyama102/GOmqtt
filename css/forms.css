@@ -1,17 +1,60 @@
-form {
+form, #statusWindow {
     background-color: var(--bg-primary);
+    color: #FFF;
     padding: 3rem;
-    width: 25rem;
     position: fixed;
+    box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.2), 0 10px 20px 0 rgba(0, 0, 0, 0.19);
+    user-select: none;
+    border: none;
+}
+
+form {
+    width: 25rem;
     top: 50%;
     left: 50%;
     -ms-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
-    box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.2), 0 10px 20px 0 rgba(0, 0, 0, 0.19);
     display: flex;
     flex-direction: column;
     justify-content: center;
-    user-select: none;
+}
+
+#statusWindow {
+    width: 15rem;
+    height: 5rem;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+#statusWindow>div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#statusMessage {
+    text-align: center;
+    font-size: 1.5rem;
+    margin-top: 1rem;
+}
+
+#statusWindow svg {
+    width: 3rem;
+    min-width: 2rem;
+    animation-name: spin;
+    animation-duration: 2000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(-360deg);
+    }
 }
 
 form>* {
