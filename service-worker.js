@@ -2,13 +2,13 @@ let cacheName = "GOmqttV0.007"; // 👈 any unique name
 
 let filesToCache = [
   "/GOmqtt/", // 👈 your repository name , both slash are important
-  "js/service-worker.js",
+  /*   "js/service-worker.js",
   "js/mqtt.js",
-  "js/UIcontrols.js",
+  "js/UIcontrols.js", */
   "images/icons-192.png",
   "images/icons-512.png",
-  "css/style.css",
-  "css/forms.css",
+  /*   "css/style.css",
+  "css/forms.css", */
   "manifest.json",
 ];
 
