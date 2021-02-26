@@ -1,4 +1,4 @@
-let cacheName = "GOmqtt"; // 👈 any unique name
+let cacheName = "GOmqttV0.007"; // 👈 any unique name
 
 let filesToCache = [
   "/GOmqtt/", // 👈 your repository name , both slash are important
