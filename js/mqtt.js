@@ -2,12 +2,12 @@ const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 var statusBroker = false;
 setStatusBroker(false);
-var cGreen = "green";
-var cYellow = "yellow";
-var cRed = "red";
+var cGreen = "rgb(150, 252, 116)";
+var cYellow = "rgb(253, 255, 107)";
+var cRed = "rgb(255, 73, 41)";
 var cGreyLight = "lightgrey";
 var cGreyDark = "darkgrey";
-var cOrange = "orange";
+var cOrange = "argb(255, 198, 107,1)";
 var username =
   urlParams.get("username") == null ? "" : urlParams.get("username");
 var password =
@@ -15,6 +15,7 @@ var password =
 var hostname = urlParams.get("host") == null ? "" : urlParams.get("host");
 var port =
   urlParams.get("port") == null ? 443 : parseInt(urlParams.get("port"));
+
 if (port == NaN) port = 443;
 
 document.getElementById("fname").value = username;
@@ -25,6 +26,9 @@ document.getElementById("fport").value = port;
 if (document.getElementById("fhost").value === "")
   document.getElementById("fbtConnect").classList.add("disableItem");
 var IOLM = new Object();
+var historyPDI = [[], [], [], [], [], [], [], []];
+scatterChart.data.datasets[0].data = historyPDI[1];
+const maxHistoryPDI = 30;
 var IOLMBaseTopic = "";
 var log = document.getElementById("log");
 
@@ -69,13 +73,16 @@ function timestamp() {
   );
 }
 addNewLogEntry("Client started. Waiting for a new connection!");
-
+if (urlParams.get("autoconnect") != null) {
+  connectBroker();
+}
 function connectBroker() {
   if (statusBroker) {
     client.disconnect();
     addNewLogEntry("Disconnected from broker!");
   } else {
     HideSettings();
+    IOLMBaseTopic = "";
     username = document.getElementById("fname").value;
     password = document.getElementById("fpassword").value;
     hostname = document.getElementById("fhost").value;
@@ -171,28 +178,12 @@ function onConnectionLost(responseObject) {
 }
 
 function getImgSrc(objectName) {
-  switch (objectName) {
-    case "NRB4-12GM40-E2-IO-C-V1":
-      return "https://files.pepperl-fuchs.com/webcat/navi/productInfo/pd/b243986a.png";
-      break;
-    case "OMT550-R200-2EP-IO-V1":
-      return "https://files.pepperl-fuchs.com/webcat/navi/productInfo/pd/b248653a.png";
-      break;
-    case "UC6000-30GM-IUEP-IO-V15":
-      return "https://files.pepperl-fuchs.com/webcat/navi/productInfo/pd/b235010a.png";
-      break;
-    case "PMI40-F90-IU2EP-IO-V15":
-      return "https://files.pepperl-fuchs.com/webcat/navi/productInfo/pd/b246119a.png";
-      break;
-    case "OBG5000-R100-2EP-IO-V31":
-      return "https://files.pepperl-fuchs.com/webcat/navi/productInfo/pd/b241434a.png";
-      break;
-    case "IQT1-F61-IO-V1":
-      return "https://files.pepperl-fuchs.com/webcat/navi/productInfo/pd/b246502b.png";
-      break;
-    default:
-      return "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D";
-      break;
+  var source = JSON.parse(sensorImg);
+  var link = source[objectName];
+  if (link != undefined) {
+    return link;
+  } else {
+    return "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D";
   }
 }
 
@@ -215,6 +206,10 @@ function findSensorType(prodName) {
     return "Dis+SS/PMI";
   } else if (startsWith(prodName, "IQT")) {
     return "RW+Len+Data";
+  } else if (startsWith(prodName, "Ceraphant")) {
+    return "Ceraphant";
+  } else if (startsWith(prodName, "iTHERM CompactLine TM311")) {
+    return "iTHERM CompactLine TM311";
   } else {
     return "Unknown";
   }
@@ -270,10 +265,42 @@ function addTemplate(prodName, portNum) {
         '/pdi"></a>'
       );
       break;
+    case "iTHERM CompactLine TM311":
+      return (
+        '<br>Temperature: <a id="port' +
+        portNum +
+        '/Temp"></a>' +
+        '<br>Switching signal: <a id="port' +
+        portNum +
+        '/signal"></a>' +
+        '<br>Diagnostic: <a id="port' +
+        portNum +
+        '/Diagnostic"></a>'
+      );
+    case "Ceraphant":
+      return (
+        '<br>Pressure: <a id="port' +
+        portNum +
+        '/pressure"></a>' +
+        '<br>Switching signal: <a id="port' +
+        portNum +
+        '/signal"></a>'
+      );
     default:
       return '<br>PDI: <a id="port' + portNum + '/pdi"></a>';
       break;
   }
+}
+
+function findIOLMObject(mObject) {
+  path = mObject.split("/");
+  var mIOLM = IOLM;
+
+  for (i = 0; i < path.length; i++) {
+    mIOLM = mIOLM[path[i]];
+    if (mIOLM == undefined) return "undefined";
+  }
+  return mIOLM;
 }
 
 function addNewLogEntryWithValue(boldText, valueText) {
@@ -305,7 +332,7 @@ function onMessageArrived(message) {
   }
 
   mIOLM[path[path.length - 1]] = JSON.parse(message.payloadString);
-  console.log(IOLM);
+  //console.log(IOLM);
 
   //Pass data to tree view
   var treeView = document.getElementById("myUL");
@@ -351,15 +378,6 @@ function onMessageArrived(message) {
   }
 
   //update IOLM Status
-  function findIOLMObject(mObject) {
-    path = mObject.split("/");
-    var mIOLM = IOLM;
-
-    for (i = 0; i < path.length; i++) {
-      mIOLM = mIOLM[path[i]];
-    }
-    return mIOLM;
-  }
 
   var portNum = message.destinationName.substr(
     message.destinationName.search("/port/") + 6,
@@ -374,10 +392,18 @@ function onMessageArrived(message) {
           document.getElementById("port" + portNum + "/serial").innerHTML !=
           IOLMref["serial"]
         ) {
-          document.getElementById("port" + portNum + "/prodname").innerHTML =
-            IOLMref["prodname"];
-          document.getElementById("port" + portNum + "/serial").innerHTML =
-            IOLMref["serial"];
+          setFramePortValue(
+            portNum,
+            "prodname",
+            IOLMref["prodname"],
+            "transparent"
+          );
+          setFramePortValue(
+            portNum,
+            "serial",
+            IOLMref["serial"],
+            "transparent"
+          );
           document.getElementById("pImage" + portNum).src = getImgSrc(
             IOLMref["prodname"]
           );
@@ -389,8 +415,12 @@ function onMessageArrived(message) {
         }
         break;
       case IOLMBaseTopic + "/port/" + portNum + "/status":
-        document.getElementById("port" + portNum + "/status").innerHTML =
-          IOLMref["status"] + " - " + IOLMref["state"];
+        setFramePortValue(
+          portNum,
+          "status",
+          IOLMref["status"] + " - " + IOLMref["state"],
+          "transparent"
+        );
 
         switch (
           document.getElementById("port" + portNum + "/status").innerHTML
@@ -408,6 +438,19 @@ function onMessageArrived(message) {
 
         break;
       case IOLMBaseTopic + "/port/" + portNum + "/pdi":
+        historyPDI[portNum - 1].push({
+          x: Date.now(),
+          y: IOLMref["uint"],
+        });
+
+        if (historyPDI[portNum - 1].length > maxHistoryPDI) {
+          historyPDI[portNum - 1].shift();
+        }
+        if (portNum == 2) {
+          /* scatterChart.data.datasets[0].data = historyPDI[1]; */
+          scatterChart.update();
+        }
+
         if (
           document.getElementById("port" + portNum + "/prodname").innerHTML !=
           ""
@@ -421,24 +464,22 @@ function onMessageArrived(message) {
               var sSignal = IOLMref["raw"][0] & 0b0001;
               var sStability = (IOLMref["raw"][0] & 0b0010) >> 1;
 
-              document.getElementById(
-                "port" + portNum + "/pdi"
-              ).innerHTML = sSignal;
+              setFramePortValue(portNum, "pdi", sSignal);
 
               if (sStability == 1) {
-                document.getElementById(
-                  "port" + portNum + "/stability"
-                ).innerHTML = "&nbspAlarm&nbsp";
-                document.getElementById(
-                  "port" + portNum + "/stability"
-                ).style.backgroundColor = cYellow;
+                setFramePortValue(
+                  portNum,
+                  "stability",
+                  "&nbspAlarm&nbsp",
+                  cYellow
+                );
               } else {
-                document.getElementById(
-                  "port" + portNum + "/stability"
-                ).innerHTML = "&nbspOK&nbsp";
-                document.getElementById(
-                  "port" + portNum + "/stability"
-                ).style.backgroundColor = "transparent";
+                setFramePortValue(
+                  portNum,
+                  "stability",
+                  "&nbspOK&nbsp",
+                  "transparent"
+                );
               }
               break;
 
@@ -449,22 +490,25 @@ function onMessageArrived(message) {
                 (IOLMref["raw"][0] << 6) +
                 ((IOLMref["raw"][1] & 0b11111100) >> 2);
 
+              /*  cdata.push({ x: Date.now(), y: sDistance });
+              scatterChart.update(); */
+
               if (sDistance == 16383) {
-                document.getElementById("port" + portNum + "/pdi").innerHTML =
-                  "&nbspNo Echo&nbsp";
-                document.getElementById(
-                  "port" + portNum + "/pdi"
-                ).style.backgroundColor = cRed;
+                setFramePortValue(portNum, "pdi", "&nbspNo Echo&nbsp", cRed);
               } else {
-                document.getElementById("port" + portNum + "/pdi").innerHTML =
-                  "&nbsp" + sDistance + " mm&nbsp";
-                document.getElementById(
-                  "port" + portNum + "/pdi"
-                ).style.backgroundColor = cGreen;
+                setFramePortValue(
+                  portNum,
+                  "pdi",
+                  "&nbsp" + sDistance + " mm&nbsp",
+                  "transparent"
+                );
               }
 
-              document.getElementById("port" + portNum + "/signal").innerHTML =
-                "&nbspSS1: " + sSignal1 + "   /   SS2: " + sSignal2;
+              setFramePortValue(
+                portNum,
+                "signal",
+                "&nbspSS1: " + sSignal1 + "   /   SS2: " + sSignal2
+              );
               break;
 
             case "Dis+SS/PMI":
@@ -476,46 +520,52 @@ function onMessageArrived(message) {
                 ((IOLMref["raw"][1] & 0b11110000) >> 4);
 
               if (sDistance == 4092) {
-                document.getElementById("port" + portNum + "/pdi").innerHTML =
-                  "&nbspInsufficient signal quality&nbsp";
-                document.getElementById(
-                  "port" + portNum + "/pdi"
-                ).style.backgroundColor = cRed;
+                setFramePortValue(
+                  portNum,
+                  "pdi",
+                  "&nbspInsufficient signal quality&nbsp",
+                  cRed
+                );
               } else if (sDistance == 4093) {
-                document.getElementById("port" + portNum + "/pdi").innerHTML =
-                  "&nbspBelow Detection Range&nbsp";
-                document.getElementById(
-                  "port" + portNum + "/pdi"
-                ).style.backgroundColor = cRed;
+                setFramePortValue(
+                  portNum,
+                  "pdi",
+                  "&nbspBelow Detection Range&nbsp",
+                  cRed
+                );
               } else if (sDistance == 4094) {
-                document.getElementById("port" + portNum + "/pdi").innerHTML =
-                  "&nbspAbove Detection Range&nbsp";
-                document.getElementById(
-                  "port" + portNum + "/pdi"
-                ).style.backgroundColor = cRed;
+                setFramePortValue(
+                  portNum,
+                  "pdi",
+                  "&nbspAbove Detection Range&nbsp",
+                  cRed
+                );
               } else if (sDistance == 4095) {
-                document.getElementById("port" + portNum + "/pdi").innerHTML =
-                  "&nbspNo Damping Element detected&nbsp";
-                document.getElementById(
-                  "port" + portNum + "/pdi"
-                ).style.backgroundColor = cRed;
+                setFramePortValue(
+                  portNum,
+                  "pdi",
+                  "&nbspNo Damping Element detected&nbsp",
+                  cRed
+                );
               } else {
-                document.getElementById("port" + portNum + "/pdi").innerHTML =
-                  "&nbsp" + (sDistance * 0.05).toFixed(2) + " mm&nbsp";
-                document.getElementById(
-                  "port" + portNum + "/pdi"
-                ).style.backgroundColor = cGreen;
+                setFramePortValue(
+                  portNum,
+                  "pdi",
+                  "&nbsp" + (sDistance * 0.05).toFixed(2) + " mm&nbsp",
+                  cGreen
+                );
               }
-
-              document.getElementById("port" + portNum + "/signal").innerHTML =
+              setFramePortValue(
+                portNum,
+                "signal",
                 "&nbspSS1: " +
-                sSignal1 +
-                "   /   SS2: " +
-                sSignal2 +
-                "   /   SS3: " +
-                sSignal3;
+                  sSignal1 +
+                  "   /   SS2: " +
+                  sSignal2 +
+                  "   /   SS3: " +
+                  sSignal3
+              );
               break;
-
             case "Dis+SS+Qlt":
               var sSignal1 = IOLMref["raw"][3] & 0b0001;
               var sSignal2 = (IOLMref["raw"][3] & 0b0010) >> 1;
@@ -523,53 +573,66 @@ function onMessageArrived(message) {
               var sDistance = (IOLMref["raw"][0] << 8) + IOLMref["raw"][1];
 
               if (sDistance == 32776) {
-                document.getElementById("port" + portNum + "/pdi").innerHTML =
-                  "&nbspOut of Range - Below Range&nbsp";
+                setFramePortValue(
+                  portNum,
+                  "pdi",
+                  "&nbspOut of Range - Below Range&nbsp"
+                );
               } else if (sDistance == 32760) {
-                document.getElementById("port" + portNum + "/pdi").innerHTML =
-                  "&nbspOut of Range - Above Range&nbsp";
+                setFramePortValue(
+                  portNum,
+                  "pdi",
+                  "&nbspOut of Range - Above Range&nbsp"
+                );
               } else if (sDistance == 32764) {
-                document.getElementById("port" + portNum + "/pdi").innerHTML =
-                  "&nbspNo Measurement Data&nbsp";
+                setFramePortValue(
+                  portNum,
+                  "pdi",
+                  "&nbspNo Measurement Data&nbsp"
+                );
               } else {
-                document.getElementById("port" + portNum + "/pdi").innerHTML =
-                  "&nbsp" + (sDistance * 0.1).toFixed(1) + " mm&nbsp";
+                setFramePortValue(
+                  portNum,
+                  "pdi",
+                  "&nbsp" + (sDistance * 0.1).toFixed(1) + " mm&nbsp"
+                );
               }
 
               if (sQuality == 3) {
-                document.getElementById(
-                  "port" + portNum + "/quality"
-                ).innerHTML = "&nbspExcellent&nbsp";
-                document.getElementById(
-                  "port" + portNum + "/quality"
-                ).style.backgroundColor = cGreen;
+                setFramePortValue(
+                  portNum,
+                  "quality",
+                  "&nbspExcellent&nbsp",
+                  cGreen
+                );
               } else if (sQuality == 2) {
-                document.getElementById(
-                  "port" + portNum + "/quality"
-                ).innerHTML = "&nbspGood&nbsp";
-                document.getElementById(
-                  "port" + portNum + "/quality"
-                ).style.backgroundColor = cYellow;
+                setFramePortValue(
+                  portNum,
+                  "quality",
+                  "&nbspGood&nbsp",
+                  cYellow
+                );
               } else if (sQuality == 1) {
-                document.getElementById(
-                  "port" + portNum + "/quality"
-                ).innerHTML = "&nbspAcceptable&nbsp";
-                document.getElementById(
-                  "port" + portNum + "/quality"
-                ).style.backgroundColor = cOrange;
+                setFramePortValue(
+                  portNum,
+                  "quality",
+                  "&nbspAcceptable&nbsp",
+                  cOrange
+                );
               } else {
-                document.getElementById(
-                  "port" + portNum + "/quality"
-                ).innerHTML = "&nbspInsufficient&nbsp";
-                document.getElementById(
-                  "port" + portNum + "/quality"
-                ).style.backgroundColor = cRed;
+                setFramePortValue(
+                  portNum,
+                  "quality",
+                  "&nbspInsufficient&nbsp",
+                  cRed
+                );
               }
-
-              document.getElementById("port" + portNum + "/signal").innerHTML =
-                "&nbspSS1: " + sSignal1 + "   /   SS2: " + sSignal2;
+              setFramePortValue(
+                portNum,
+                "signal",
+                "&nbspSS1: " + sSignal1 + "   /   SS2: " + sSignal2
+              );
               break;
-
             case "RW+Len+Data":
               var sRead = IOLMref["raw"][0] & 0b0001;
               var sWrite = (IOLMref["raw"][0] & 0b0010) >> 1;
@@ -579,44 +642,72 @@ function onMessageArrived(message) {
               var sData = IOLMref["raw"].slice(4, 32);
 
               if (sError == 1) {
-                document.getElementById("port" + portNum + "/mode").innerHTML =
-                  "&nbspError&nbsp";
-                document.getElementById(
-                  "port" + portNum + "/mode"
-                ).style.backgroundColor = cRed;
+                setFramePortValue(portNum, "mode", "&nbspError&nbsp", cRed);
               } else if (sTaskActive == 1) {
                 if (sRead == 1) {
-                  document.getElementById(
-                    "port" + portNum + "/mode"
-                  ).innerHTML = "&nbspReading TAG&nbsp";
+                  setFramePortValue(
+                    portNum,
+                    "mode",
+                    "&nbspReading TAG&nbsp",
+                    "transparent"
+                  );
                 } else if (sWrite == 1) {
-                  document.getElementById(
-                    "port" + portNum + "/mode"
-                  ).innerHTML = "&nbspTAG was Written&nbsp";
+                  setFramePortValue(
+                    portNum,
+                    "mode",
+                    "&nbspTAG was Written&nbsp",
+                    "transparent"
+                  );
                 } else {
-                  document.getElementById(
-                    "port" + portNum + "/mode"
-                  ).innerHTML = "&nbspActive - No TAG present&nbsp";
+                  setFramePortValue(
+                    portNum,
+                    "mode",
+                    "&nbspActive - No TAG present&nbsp",
+                    "transparent"
+                  );
                 }
               } else {
-                document.getElementById("port" + portNum + "/mode").innerHTML =
-                  "&nbspInactive&nbsp";
-                document.getElementById(
-                  "port" + portNum + "/mode"
-                ).style.backgroundColor = cGreyDark;
+                setFramePortValue(
+                  portNum,
+                  "mode",
+                  "&nbspInactive&nbsp",
+                  cGreyDark
+                );
               }
 
-              document.getElementById(
-                "port" + portNum + "/len"
-              ).innerHTML = sLen;
-              document.getElementById(
-                "port" + portNum + "/pdi"
-              ).innerHTML = sData.slice(0, sLen);
+              setFramePortValue(portNum, "len", sLen, "transparent");
+              setFramePortValue(
+                portNum,
+                "pdi",
+                sData.slice(0, sLen),
+                "transparent"
+              );
               break;
-
+            case "iTHERM CompactLine TM311":
+              var sSignal = IOLMref["raw"][3] & 0b0001;
+              var sStatus = (IOLMref["raw"][3] & 0b11110) >> 1;
+              var sTemperature = (IOLMref["raw"][0] << 8) + IOLMref["raw"][1];
+              setFramePortValue(portNum, "Temp", sTemperature, "transparent");
+              setFramePortValue(portNum, "signal", sSignal, "transparent");
+              setFramePortValue(portNum, "Diagnostic", sStatus, "transparent");
+              break;
+            case "Ceraphant":
+              var sSignal1 = IOLMref["raw"][3] & 0b0001;
+              var sSignal2 = (IOLMref["raw"][3] & 0b0010) >> 1;
+              var sPressure =
+                (IOLMref["raw"][0] << 22) +
+                (IOLMref["raw"][1] << 14) +
+                (IOLMref["raw"][1] << 6) +
+                (IOLMref["raw"][0] >> 2);
+              setFramePortValue(portNum, "pressure", sPressure, "transparent");
+              setFramePortValue(
+                portNum,
+                "signal",
+                "&nbspSS1: " + sSignal1 + "   /   SS2: " + sSignal2
+              );
+              break;
             default:
-              document.getElementById("port" + portNum + "/pdi").innerHTML =
-                IOLMref["raw"];
+              setFramePortValue(portNum, "pdi", IOLMref["raw"], "transparent");
               break;
           }
         } else {
@@ -639,9 +730,7 @@ function onMessageArrived(message) {
                 ).innerHTML = "Overtemperature";
                 break;
               default:
-                document.getElementById(
-                  "port" + portNum + "/temperature"
-                ).innerHTML = "OK";
+                setFramePortValue(portNum, "temperature", "OK");
                 break;
             }
           }
@@ -650,5 +739,14 @@ function onMessageArrived(message) {
 
       default:
     }
+  }
+}
+
+function setFramePortValue(portN, field, value, color) {
+  document.getElementById("port" + portN + "/" + field).innerHTML = value;
+  if (color != undefined) {
+    document.getElementById(
+      "port" + portN + "/" + field
+    ).style.backgroundColor = color;
   }
 }

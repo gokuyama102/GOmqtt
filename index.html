@@ -11,14 +11,30 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/forms.css">
     <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+
+    <script defer src="js/chartstest.js"></script>
+    <script defer src="js/ServiceWorker.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
+    <script defer src="js/UIcontrols.js" type="text/javascript"></script>
+    <script defer src="js/mqtt.js" type="text/javascript"></script>
+    <script type="text/javascript" src="sensorImg.js"></script>
     <title>IOLM Demo</title>
 </head>
 
 <body>
+
     <main>
+
         <div class="geral" id="PortMonitor">
             <h1>IOLM Port Monitor</h1>
             <div id="portMonitorFrame">
+
+                <div class="framePortDisable chhart">
+                    <canvas id="myChart" width="400" height="400"></canvas>
+                </div>
                 <div id="framePort1" class="framePort">
                     <img class="portImage" id="pImage1"
                         src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D">
@@ -282,10 +298,7 @@
         </div>
     </dialog>
 
-    <script defer src="js/ServiceWorker.js" type="text/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
-    <script defer src="js/UIcontrols.js" type="text/javascript"></script>
-    <script defer src="js/mqtt.js" type="text/javascript"></script>
+
 </body>
 
 </html>

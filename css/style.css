@@ -11,6 +11,12 @@
         --transition-speed: 600ms
     }
 
+    .chhart {
+        display: none;
+        height: 400px;
+        width: 400px;
+    }
+
     body {
         color: black;
         background-color: white;
