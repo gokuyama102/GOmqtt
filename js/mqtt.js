@@ -277,6 +277,7 @@ function addTemplate(prodName, portNum) {
         portNum +
         '/Diagnostic"></a>'
       );
+      break;
     case "Ceraphant":
       return (
         '<br>Pressure: <a id="port' +
@@ -286,6 +287,7 @@ function addTemplate(prodName, portNum) {
         portNum +
         '/signal"></a>'
       );
+      break;
     default:
       return '<br>PDI: <a id="port' + portNum + '/pdi"></a>';
       break;
@@ -687,7 +689,12 @@ function onMessageArrived(message) {
               var sSignal = IOLMref["raw"][3] & 0b0001;
               var sStatus = (IOLMref["raw"][3] & 0b11110) >> 1;
               var sTemperature = (IOLMref["raw"][0] << 8) + IOLMref["raw"][1];
-              setFramePortValue(portNum, "Temp", sTemperature, "transparent");
+              setFramePortValue(
+                portNum,
+                "Temp",
+                sTemperature / 10 + " °C",
+                "transparent"
+              );
               setFramePortValue(portNum, "signal", sSignal, "transparent");
               setFramePortValue(portNum, "Diagnostic", sStatus, "transparent");
               break;
