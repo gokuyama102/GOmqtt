@@ -1750,4 +1750,7 @@ var sensorImg = '{"DK12-11-IO/92/136":"https://files.pepperl-fuchs.com/webcat/na
 '"VDM28-8-L-IO/115b/136":"https://files.pepperl-fuchs.com/webcat/navi/productInfo/pd/b233748a.png",'+
 '"VDM28-8-L-IO/33/110/115b/122":"https://files.pepperl-fuchs.com/webcat/navi/productInfo/pd/b233748a.png",'+
 '"VDM28-8-L-IO/73c/110/122":"https://files.pepperl-fuchs.com/webcat/navi/productInfo/pd/b233484a.png",'+
-'"VDM28-8-L-IO/73c/136":"https://files.pepperl-fuchs.com/webcat/navi/productInfo/pd/b233484a.png"}';
+'"VDM28-8-L-IO/73c/136":"https://files.pepperl-fuchs.com/webcat/navi/productInfo/pd/b233484a.png",'+
+'"Picomag":"https://www.pt.endress.com/__image/a/4396107/k/c50fc6e209b6b4ca4d2f01c3eb84b080db96e64b/ar/8-10/w/412/t/jpg/b/ffffff/n/true/fn/Picomag%20(DMA)%20The%20economical%20flowmeter%20for%20process%20quality%20control%20and%20monitoring%20-%20PP01.jpg",'+
+'"Liquipoint":"https://www.pt.endress.com/__image/a/995047/k/4a8cde5ccf688545d63f18281835b033f0efefa0/ar/8-10/w/412/t/jpg/b/ffffff/n/true/fn/Liquipoint_FTW23_PP_3.jpg",'+
+'"iTHERM CompactLine TM311":"https://www.br.endress.com/__image/a/8454403/k/53f507d41c5f592290249d31eeb759a20a8f1831/ar/8-10/w/412/t/jpg/b/ffffff/n/true/fn/TM311%20iTHERM%20CompactLine.jpg"}';
