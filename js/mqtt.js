@@ -206,12 +206,8 @@ function findSensorType(prodName) {
     return "Dis+SS/PMI";
   } else if (startsWith(prodName, "IQT")) {
     return "RW+Len+Data";
-  } else if (startsWith(prodName, "Ceraphant")) {
-    return "Ceraphant";
-  } else if (startsWith(prodName, "iTHERM CompactLine TM311")) {
-    return "iTHERM CompactLine TM311";
   } else {
-    return "Unknown";
+    return prodName;
   }
 }
 
@@ -238,7 +234,6 @@ function addTemplate(prodName, portNum) {
         portNum +
         '/signal"></a>'
       );
-      break;
     case "Dis+SS+Qlt":
       return (
         '<br>Distance: <a id="port' +
@@ -277,7 +272,6 @@ function addTemplate(prodName, portNum) {
         portNum +
         '/Diagnostic"></a>'
       );
-      break;
     case "Ceraphant":
       return (
         '<br>Pressure: <a id="port' +
@@ -287,7 +281,33 @@ function addTemplate(prodName, portNum) {
         portNum +
         '/signal"></a>'
       );
-      break;
+    case "Picomag":
+      return (
+        '<br>Switching signal: <a id="port' +
+        portNum +
+        '/signal"></a>' +
+        '<br>Temperature: <a id="port' +
+        portNum +
+        '/temperature"></a>' +
+        '<br>Volume Flow: <a id="port' +
+        portNum +
+        '/volumeflow"></a>' +
+        '<br>Totalizer: <a id="port' +
+        portNum +
+        '/totalizer"></a>' +
+        '<br>Conductivity: <a id="port' +
+        portNum +
+        '/conductivity"></a>'
+      );
+    case "Liquipoint":
+      return (
+        '<br>Coverage: <a id="port' +
+        portNum +
+        '/coverage"></a>' +
+        '<br>Switching signal: <a id="port' +
+        portNum +
+        '/signal"></a>'
+      );
     default:
       return '<br>PDI: <a id="port' + portNum + '/pdi"></a>';
       break;
@@ -491,10 +511,6 @@ function onMessageArrived(message) {
               var sDistance =
                 (IOLMref["raw"][0] << 6) +
                 ((IOLMref["raw"][1] & 0b11111100) >> 2);
-
-              /*  cdata.push({ x: Date.now(), y: sDistance });
-              scatterChart.update(); */
-
               if (sDistance == 16383) {
                 setFramePortValue(portNum, "pdi", "&nbspNo Echo&nbsp", cRed);
               } else {
@@ -713,6 +729,65 @@ function onMessageArrived(message) {
                 "&nbspSS1: " + sSignal1 + "   /   SS2: " + sSignal2
               );
               break;
+            case "Liquipoint":
+              var sSignal1 = (IOLMref["raw"][0] & 0b01000000) >> 6;
+              var sSignal2 = (IOLMref["raw"][0] & 0b10000000) >> 7;
+              var sCoverage =
+                ((IOLMref["raw"][0] & 0b00111111) << 8) + IOLMref["raw"][1];
+
+              setFramePortValue(
+                portNum,
+                "coverage",
+                "&nbsp" + sCoverage / 10 + " %&nbsp",
+                "transparent"
+              );
+
+              setFramePortValue(
+                portNum,
+                "signal",
+                "&nbspSS1: " + sSignal1 + "   /   SS2: " + sSignal2
+              );
+              break;
+            case "Picomag":
+              var sSignal1 = (IOLMref["raw"][14] & 0b00000100) >> 2;
+              var sSignal2 = (IOLMref["raw"][14] & 0b00001000) >> 3;
+              var sTemperature =
+                ((IOLMref["raw"][12] << 8) + IOLMref["raw"][13]) / 10;
+              var sVolumeflow = getFloatValue(IOLMref["raw"].slice(8, 12));
+              var sTotalizer = getFloatValue(IOLMref["raw"].slice(4, 8));
+              var sConductivity = getFloatValue(IOLMref["raw"].slice(0, 4));
+
+              setFramePortValue(
+                portNum,
+                "temperature",
+                "&nbsp" + sTemperature + " °C&nbsp",
+                "transparent"
+              );
+              setFramePortValue(
+                portNum,
+                "volumeflow",
+                "&nbsp" + sVolumeflow + "  l/s&nbsp",
+                "transparent"
+              );
+              setFramePortValue(
+                portNum,
+                "totalizer",
+                "&nbsp" + sTotalizer + " &nbsp",
+                "transparent"
+              );
+              setFramePortValue(
+                portNum,
+                "conductivity",
+                "&nbsp" + sConductivity + " µS/cm&nbsp",
+                "transparent"
+              );
+              setFramePortValue(
+                portNum,
+                "signal",
+                "&nbspSS1: " + sSignal1 + "   /   SS2: " + sSignal2
+              );
+              break;
+
             default:
               setFramePortValue(portNum, "pdi", IOLMref["raw"], "transparent");
               break;
@@ -756,4 +831,13 @@ function setFramePortValue(portN, field, value, color) {
       "port" + portN + "/" + field
     ).style.backgroundColor = color;
   }
+}
+
+function getFloatValue(data) {
+  var buf = new ArrayBuffer(4);
+  var view = new DataView(buf);
+  data.forEach(function (b, i) {
+    view.setUint8(i, b);
+  });
+  return view.getFloat32(0);
 }
