@@ -744,7 +744,7 @@ function onMessageArrived(message) {
               setFramePortValue(
                 portNum,
                 "temperature",
-                sTemperature,
+                sTemperature + " °C",
                 "transparent"
               );
               break;
