@@ -1,11 +1,12 @@
 var ctx = document.getElementById("myChart").getContext("2d");
 var cdata = [];
+var chLabel = "Port 31";
 var config = {
   type: "line",
   data: {
     datasets: [
       {
-        label: "Port 3",
+        label: chLabel,
         data: cdata,
         borderColor: "rgba(0,165,135,1)",
         backgroundColor: "rgba(0,165,135,0.1)",

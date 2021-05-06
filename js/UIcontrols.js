@@ -1,9 +1,11 @@
 var PortMonitor = document.getElementById("PortMonitor");
+var PortDetail = document.getElementById("PortDetails");
 var DataExplorer = document.getElementById("DataExplorer");
 var Datalogger = document.getElementById("Datalogger");
 var Settings = document.getElementById("Settings");
 var Publish = document.getElementById("Publish");
 PortMonitor.style.display = "block";
+PortDetail.style.display = "block";
 DataExplorer.style.display = "none";
 Datalogger.style.display = "none";
 Settings.style.display = "flex";

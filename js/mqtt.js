@@ -206,6 +206,8 @@ function findSensorType(prodName) {
     return "Dis+SS/PMI";
   } else if (startsWith(prodName, "IQT")) {
     return "RW+Len+Data";
+  } else if (startsWith(prodName, "ENA58TL")) {
+    return "ENA58TL";
   } else {
     return prodName;
   }
@@ -213,7 +215,6 @@ function findSensorType(prodName) {
 
 function addTemplate(prodName, portNum) {
   var prodType = findSensorType(prodName).split("/");
-
   switch (prodType[0]) {
     case "SS+Qlt":
       return (
@@ -258,6 +259,19 @@ function addTemplate(prodName, portNum) {
         '<br>Data: <a id="port' +
         portNum +
         '/pdi"></a>'
+      );
+      break;
+    case "ENA58TL":
+      return (
+        '<br>Position: <a id="port' +
+        portNum +
+        '/position"></a>' +
+        '<br>Direction: <a id="port' +
+        portNum +
+        '/direction"></a>' +
+        '<br>Temperature: <a id="port' +
+        portNum +
+        '/temperature"></a>'
       );
       break;
     case "iTHERM CompactLine TM311":
@@ -310,7 +324,6 @@ function addTemplate(prodName, portNum) {
       );
     default:
       return '<br>PDI: <a id="port' + portNum + '/pdi"></a>';
-      break;
   }
 }
 
@@ -399,7 +412,7 @@ function onMessageArrived(message) {
       .replace(/ /g, "&nbsp");
   }
 
-  //update IOLM Status
+  //update IOLM Monitor
 
   var portNum = message.destinationName.substr(
     message.destinationName.search("/port/") + 6,
@@ -504,7 +517,6 @@ function onMessageArrived(message) {
                 );
               }
               break;
-
             case "Dis+SS":
               var sSignal1 = IOLMref["raw"][1] & 0b0001;
               var sSignal2 = (IOLMref["raw"][1] & 0b0010) >> 1;
@@ -528,7 +540,6 @@ function onMessageArrived(message) {
                 "&nbspSS1: " + sSignal1 + "   /   SS2: " + sSignal2
               );
               break;
-
             case "Dis+SS/PMI":
               var sSignal1 = IOLMref["raw"][1] & 0b0001;
               var sSignal2 = (IOLMref["raw"][1] & 0b0010) >> 1;
@@ -701,6 +712,42 @@ function onMessageArrived(message) {
                 "transparent"
               );
               break;
+            case "ENA58TL":
+              var sPosition =
+                (IOLMref["raw"][4] << 24) +
+                (IOLMref["raw"][5] << 16) +
+                (IOLMref["raw"][6] << 8) +
+                IOLMref["raw"][7];
+              var sDirection = (IOLMref["raw"][11] & 0b0100) >> 2;
+              var sTemperature =
+                (IOLMref["raw"][0] << 24) +
+                (IOLMref["raw"][1] << 16) +
+                (IOLMref["raw"][2] << 8) +
+                IOLMref["raw"][3];
+
+              setFramePortValue(portNum, "position", sPosition, "transparent");
+              if (sDirection == 1) {
+                setFramePortValue(
+                  portNum,
+                  "direction",
+                  "CounterClockwise",
+                  "transparent"
+                );
+              } else {
+                setFramePortValue(
+                  portNum,
+                  "direction",
+                  "Clockwise",
+                  "transparent"
+                );
+              }
+              setFramePortValue(
+                portNum,
+                "temperature",
+                sTemperature,
+                "transparent"
+              );
+              break;
             case "iTHERM CompactLine TM311":
               var sSignal = IOLMref["raw"][3] & 0b0001;
               var sStatus = (IOLMref["raw"][3] & 0b11110) >> 1;
@@ -787,7 +834,6 @@ function onMessageArrived(message) {
                 "&nbspSS1: " + sSignal1 + "   /   SS2: " + sSignal2
               );
               break;
-
             default:
               setFramePortValue(portNum, "pdi", IOLMref["raw"], "transparent");
               break;
@@ -796,7 +842,6 @@ function onMessageArrived(message) {
           document.getElementById("diagPort" + portNum).innerHTML = "";
         }
         break;
-
       case IOLMBaseTopic + "/port/" + portNum + "/isdu/response/index65":
         if (portNum < 3) {
           if (IOLMref["status"] == "OK") {
@@ -818,7 +863,6 @@ function onMessageArrived(message) {
           }
         }
         break;
-
       default:
     }
   }

@@ -109,7 +109,7 @@
         #myUL {
             padding-top: 2rem;
         }
-        #portMonitorFrame {
+        .portMonitorFrame {
             grid-template-columns: minmax(20rem, 97%);
         }
         .logo {
@@ -216,7 +216,7 @@
             align-items: center;
             height: 100%;
         }
-        #portMonitorFrame {
+        .portMonitorFrame {
             grid-template-columns: minmax(20rem, 35rem);
         }
         main {
@@ -253,7 +253,7 @@
     }
 
     @media only screen and (min-width: 1080px) {
-        #portMonitorFrame {
+        .portMonitorFrame {
             grid-template-columns: minmax(20rem, 35rem) minmax(20rem, 35rem);
         }
     }
@@ -266,7 +266,7 @@
         word-wrap: break-word;
     }
 
-    #portMonitorFrame {
+    .portMonitorFrame {
         display: grid;
         grid-gap: 1rem;
         justify-content: center;
@@ -282,6 +282,16 @@
         grid-gap: 1rem;
         justify-content: start;
         align-content: center;
+    }
+
+    .frameTitle {
+        grid-column-start: 1;
+        grid-column-end: 3;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 0;
+        margin-bottom: 0;
     }
 
     .portImage {
@@ -351,4 +361,8 @@
     #log {
         padding-left: 2%;
         padding-right: 2%;
+    }
+
+    .hide {
+        display: none;
     }
