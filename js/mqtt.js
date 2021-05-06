@@ -90,7 +90,7 @@ function connectBroker() {
     client = new Paho.MQTT.Client(
       hostname,
       port,
-      "IOLM_DEMO_" + parseInt(Math.random() * 100, 10)
+      "IOLM_DEMO_" + parseInt(Math.random() * 10000, 10)
     );
     var options = {
       useSSL: true,
