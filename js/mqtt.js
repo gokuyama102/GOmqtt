@@ -200,6 +200,8 @@ function findSensorType(prodName) {
     return "Dis+SS+Qlt";
   } else if (startsWith(prodName, "NR") || startsWith(prodName, "OB")) {
     return "SS+Qlt";
+  } else if (startsWith(prodName, "OQT")) {
+    return "2SS";
   } else if (startsWith(prodName, "UC")) {
     return "Dis+SS";
   } else if (startsWith(prodName, "PMI")) {
@@ -225,7 +227,15 @@ function addTemplate(prodName, portNum) {
         portNum +
         '/stability"></a>'
       );
-      break;
+    case "2SS":
+      return (
+        '<br>Switching signal 1: <a id="port' +
+        portNum +
+        '/SS1"></a>' +
+        '<br>Switching signal 2: <a id="port' +
+        portNum +
+        '/SS2"></a>'
+      );
     case "Dis+SS":
       return (
         '<br>Distance: <a id="port' +
@@ -495,6 +505,12 @@ function onMessageArrived(message) {
               document.getElementById("port" + portNum + "/prodname").innerHTML
             )
           ) {
+            case "2SS":
+              var SS1 = IOLMref["raw"][0] & 0b0001;
+              var SS2 = (IOLMref["raw"][0] & 0b0010) >> 1;
+              setFramePortValue(portNum, "SS1", SS1);
+              setFramePortValue(portNum, "SS2", SS2);
+              break;
             case "SS+Qlt":
               var sSignal = IOLMref["raw"][0] & 0b0001;
               var sStability = (IOLMref["raw"][0] & 0b0010) >> 1;
